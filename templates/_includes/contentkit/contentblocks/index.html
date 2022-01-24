@@ -1,0 +1,38 @@
+{# Allow `contentBlocks` variable to be overwritten if set with the include #}
+{%- set contentBlocks = contentBlocks ?? [] -%}
+{%- set sectionContent = sectionContent ?? "" -%}
+{%- set previousSection = previousSection ?? entry ?? {} -%}
+
+{# Loop through the blocks #}
+{% for block in contentBlocks %}
+    {%- if block.type != "newSection" -%}
+        {%- set sectionContent -%}
+            {{- sectionContent -}}
+            {# Load the appropriate template partial based on the block type #}
+            {%- include [
+                '_includes/contentblocks/' ~ block.type,
+                '_includes/contentkit/contentblocks/types/' ~ block.type,
+            ] ignore missing with {
+                block: block,
+                entry: entry ?? null,
+                section: previousSection ?? null,
+            } only -%}
+
+        {%- endset -%}
+    {%- endif -%}
+
+    {%- if block.type == "newSection" or loop.last -%}
+        {%- include [
+            '_includes/contentblocks/newsection',
+            '_includes/contentkit/contentblocks/types/newsection',
+        ] ignore missing with {
+            block: previousSection,
+            sectionContent: sectionContent,
+        } only -%}
+
+        {%- set sectionContent = "" -%}
+        {%- set previousSection = block -%}
+    {%- endif -%}
+
+{% endfor %}
+

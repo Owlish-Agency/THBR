@@ -1,0 +1,22 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set listItem = listItem ?? block["listItem"] ?? "" -%}
+{%- set listStyle = listStyle ?? block["listStyle"] ?? "" -%}
+{%- set listLayout = listLayout ?? block["listLayout"] ?? "" -%}
+{%- set section = section ?? null -%}
+
+{%- set content -%}
+    {% include ["_includes/patterns/linkList/type/#{listStyle}", "_includes/patterns/linkList/type/list"] with {
+        element: listItem,
+        layout: listLayout
+    } only %}
+{%- endset -%}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+    section: section,
+}) }}
+
+

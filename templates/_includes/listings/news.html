@@ -1,0 +1,165 @@
+{%- set type = type ?? null -%}
+{%- set selectedFilters = craft.request.getParam('filters') %}
+{%- set selectedTypes = craft.request.getParam('type')|length ? craft.request.getParam('type') : "" %}
+{%- set relatedTo = ['or'] -%}
+
+{% if selectedFilters|length %}
+    {% for filters in selectedFilters %}
+        {%- set relatedTo = relatedTo|merge([{ targetElement: filters }]) -%}
+    {% endfor %}
+{% endif %}
+
+{%- set query = craft.request.getParam('query')|length ? craft.request.getParam('query')|split(" ")|join("* *") : null -%}
+
+{# Get news based on filtered options #}
+{% set news = craft.entries({
+    section: "news",
+    order: "postDate desc",
+    relatedTo: type|length ? type : relatedTo|length > 1 ? (relatedTo) : null,
+    search: "*#{query}*",
+    with: ['image', 'newsType', 'programType']
+})  %}
+
+{%- set newsType = craft.categories.group('newsType') -%}
+{%- set programType = craft.categories.group('programType') -%}
+
+{% if type == null %}
+    <div class="uk-grid uk-flex-center">
+        <div class="uk-width-3-5@m">
+            {%- include "_includes/markup/search" with {
+                url: "{{craft.request.getQueryStringWithoutPath()}}",
+                placeholder: "Search...",
+                query: query
+            } -%}
+        </div>
+    </div>
+{% endif %}
+<div class="uk-section tm-news-listing">
+    <div class="uk-container">
+        <div class="uk-grid uk-grid-divider" uk-grid>
+            {% if type == null %}
+                <div class="uk-width-1-5@m">
+                    <div class="uk-panel uk-panel-box uk-hidden@l">
+                        <ul uk-accordion>
+                            <li>
+                                <a class="uk-accordion-title" href="#">Filter</a>
+                                <div class="uk-accordion-content">
+                                    <form method="GET" class="uk-form uk-form-stacked" action="/news-events">
+                                        <input type="hidden" class="uk-invisible" name="query" value="{{ query }}">
+                                        <h6>Filter by Category:</h6>
+                                        <ul class="uk-list tm-filters">
+                                            {% for category in newsType %}
+                                                <li>
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input type="checkbox" name="filters[]" value="{{ category.id }}" {% if category.id in selectedFilters %}checked{% endif %}>
+                                                            {{ category.title }}
+                                                        </label>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                        <h6>Filter by programs:</h6>
+                                        <ul class="uk-list tm-filters">
+                                            {% for category in programType %}
+                                                <li>
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input type="checkbox" name="filters[]" value="{{ category.id }}" {% if category.id in selectedFilters %}checked{% endif %}>
+                                                            {{ category.title }}
+                                                        </label>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                        <button type="submit" class="js-submit-form uk-button uk-button-primary">Filter</button>
+                                    </form>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <form method="GET" class="uk-form uk-form-stacked uk-visible@l" action="/news-events">
+                        <input type="hidden" class="uk-invisible" name="query" value="{{ query }}">
+                        <div class="uk-panel uk-panel-box">
+                            <h6>Filter by Category:</h6>
+                            <ul class="uk-list tm-filters">
+                                {% for category in newsType %}
+                                    <li>
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" name="filters[]" value="{{ category.id }}" {% if category.id in selectedFilters %}checked{% endif %}>
+                                                {{ category.title }}
+                                            </label>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <h6>Filter by programs:</h6>
+                            <ul class="uk-list tm-filters">
+                                {% for category in programType %}
+                                    <li>
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" name="filters[]" value="{{ category.id }}" {% if category.id in selectedFilters %}checked{% endif %}>
+                                                {{ category.title }}
+                                            </label>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <button type="submit" class="js-submit-form uk-button uk-button-primary">Filter</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="uk-width-4-5@m">
+            {% else %}
+                <div class="uk-width-1-1">
+            {% endif %}
+                {% if news|length %}
+                    {%- paginate news.limit(10) as pageInfo, news -%}
+                       {% for month, entries in news|group('postDate|date("Y-m")') %}
+                            <h3>{{ month|date("F Y") }}</h3>
+                            <dl class="uk-description-list uk-description-list-divider">
+                                {%- for article in entries -%}
+                                    <dt>
+                                        <div class="uk-grid uk-grid-medium" uk-grid>
+                                        {% if article.image|length %}
+                                            <div class="uk-width-1-3@s uk-width-1-3@m">
+                                                <img src="{{ article.image[0].url() }}" title="{{ article.image[0].title }}" {% if article.image[0].altDescription is defined and article.image[0].altDescription|length %}{{ article.image[0].altDescription|striptags }}{% endif %}>
+                                            </div>
+                                            <div class="uk-width-2-3@s uk-width-2-3@m">
+                                        {% else %}
+                                            <div class="uk-width-1-1">
+                                        {% endif %}
+                                                <h4 class="uk-margin-remove"><a href="{{ article.url }}">{{ article.title }}</a></h4>
+                                                <p class="uk-margin-remove-top uk-text-meta">
+                                                    <strong>Post Date:</strong>
+                                                    {{ article.postDate|date("F j, Y") }}
+                                                </p>
+                                                <p>{{ article.excerpt|striptags }}</p>
+                                                <a href="{{ article.url }}" uk-icon="arrow-right">Learn More</a>
+                                            </div>
+                                        </div>
+                                    </dt>
+                                {% endfor %}
+                            </dl>
+                        {% endfor %}
+                    {%- include "_includes/patterns/pagination" with {
+                        pageInfo: pageInfo,
+                        includePageInfo: true,
+                    } -%}
+                {% else %}
+                    <div class="uk-text-center">
+                        {% if type|length %}
+                            <p class="uk-text-large">Sorry, there are no events at this time</p>
+                            <p class="uk-margin-bottom-remove"><a href="/" class="uk-button uk-button-primary">Visit Homepage</a></p>
+                        {% else %}
+                            <p class="uk-text-large">Sorry, there isn't any news that match the selected criteria.</p>
+                            <p class="uk-margin-bottom-remove"><a href="{{craft.request.getQueryStringWithoutPath()}}" class="uk-button uk-button-primary">View all news</a></p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

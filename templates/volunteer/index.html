@@ -1,0 +1,229 @@
+{% set volunteerAreas = craft.categories.group("volunteerAreas") %}
+{% set successFlashMessage = successFlashMessage ?? "Thanks for your timesheet submission." %}
+
+{% if craft.session.isLoggedIn %}
+    {% set timesheet = craft.entries.section("volunteerTimesheets").authorId(currentUser.id).find() %}
+    <section class="uk-section uk-section-small uk-padding-remove-top">
+        <div class="uk-container">
+            <div class="uk-grid uk-flex-center" uk-grid>
+                <div class="uk-width-1-1 uk-width-3-4@m uk-text-center">
+                   <h6><span uk-icon="user"></span>Welcome, {{ currentUser.getFullName() }}</h6>
+                   <a class="uk-button uk-button-default" href="{{ logoutUrl }}">Log Out</a><br>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="uk-section">
+        <div class="uk-container">
+            <div class="uk-grid uk-flex-center" uk-grid>
+                <div class="uk-width-1-1">
+                    <p class="uk-text-center">Use this form to log time for all Volunteer work.</p>
+
+                    {% macro errorList(errors) %}
+                        {% if errors %}
+                            <ul class="errors">
+                                {% for error in errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% endmacro %}
+
+                    {% from _self import errorList %}
+
+                    <form class="uk-form-stacked" method="post" accept-charset="UTF-8">
+                        {{ getCsrfInput() }}
+                        <input type="hidden" name="action" value="entries/saveEntry">
+                        <input type="hidden" name="redirect" value="{{ craft.request.getUrl() }}">
+                        <input type="hidden" name="sectionId" value="9">
+                        <input type="hidden" name="enabled" value="1">
+                        <input type="hidden" name="notice" value="{{ successFlashMessage|hash }}" />
+                        <input type="hidden" name="successMessage" value="{{ successFlashMessage|hash }}">
+                        <input name="fields[totalVolunteeredHours]" type="hidden" id="totalVolunteeredHours" class="uk-input uk-width-1-1">
+
+                        <div class="uk-grid uk-grid-small" uk-grid>
+
+                            <div class="uk-width-1-1">
+                                <div class="uk-form-controls">
+                                    <input id="title" type="text" name="fields[volunteerName]" class="uk-input uk-width-1-1" value="{{ currentUser.getFullName() }}" placeholder="User Name*" required>
+                                </div>
+                            </div>
+
+                            <div class="uk-width-1-1 uk-width-1-3@m">
+                                <div class="uk-form-controls">
+                                    <input name="fields[volunteerDate][date]" type="text" class="datepicker uk-input uk-width-1-1" placeholder="Date*" required>
+                                </div>
+                            </div>
+
+                            <div class="uk-width-1-1 uk-width-1-3@m">
+                                <div class="uk-form-controls">
+                                    <select class="uk-select" name="fields[volunteerArea]" required>
+                                        <option value="" disabled selected>Select Volunteer Area*</option>
+                                        {% for type in volunteerAreas %}
+                                            <option value="{{ type.id }}">{{ type.title }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="uk-width-1-1 uk-width-1-3@m">
+                                <div class="uk-form-controls">
+                                    <input name="fields[patientFullName]" type="text" class="uk-input uk-width-1-1" placeholder="Patient Full Name">
+                                </div>
+                            </div>
+
+
+                            <div class="uk-width-1-1 uk-width-1-2@m">
+                                <div class="uk-form-controls">
+                                    <input id="startTime" name="fields[startTime][time]" type="text" class="timepicker uk-input uk-width-1-1" placeholder="Start Time*" required>
+                                </div>
+                            </div>
+
+                            <div class="uk-width-1-1 uk-width-1-2@m">
+                                <div class="uk-form-controls">
+                                    <input id="endTime" name="fields[endTime][time]" type="text" class="timepicker uk-input uk-width-1-1" placeholder="End Time*" required>
+                                </div>
+                            </div>
+
+                            {# <div class="uk-width-1-1 uk-width-1-3@m">
+                                <div class="uk-form-controls">
+                                    <input name="fields[totalVolunteeredHours]" type="number" class="uk-input uk-width-1-1" placeholder="Total Volunteered Hours*" Required>
+                                </div>
+                            </div> #}
+
+                            <div class="uk-width-1-1 uk-width-1-2@m">
+                                <div class="uk-form-controls">
+                                    <input name="fields[travelTime]" type="number" class="uk-input uk-width-1-1" placeholder="Travel Time (minutes)*" Required>
+                                </div>
+                            </div>
+
+                            <div class="uk-width-1-1 uk-width-1-2@m">
+                                <div class="uk-form-controls">
+                                    <input name="fields[mileage]" type="number" class="uk-input uk-width-1-1" placeholder="Mileage*" Required>
+                                </div>
+                            </div>
+
+                            <div class="uk-width-1-1">
+                                <div class="uk-form-controls">
+                                    <textarea id="body" name="fields[notesComments]" class="uk-textarea uk-width-1-1" placeholder="Notes & Comments*" Required></textarea>
+                                </div>
+                            </div>
+
+                            <div class="uk-width-1-1">
+                                <div class="uk-form-controls uk-flex uk-flex-center">
+                                    <button id="js-submitButton" class="uk-button uk-button-primary uk-button-large" type="submit">
+                                        Submit Timesheet
+                                    </button>
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="uk-section uk-section-muted">
+        <div class="uk-container">
+            <div class="uk-grid" uk-grid>
+                <div class="uk-width-1-1">
+                    <h3 class="uk-text-center tm-timesheet-title">Time History
+                        <span><a uk-icon="pull" onclick="printData()">Print</a></span>
+                    </h3>
+                    <div id="printTable">
+                        {% if timesheet|length %}
+                            <img src="/img/branding-print.svg" alt="{{ siteName }}" class="print" style="width: 300px; margin-bottom: 10px;"/>
+                            <h3 class="print" style="font-size: 21px; font-weight: bold;">{{ currentUser.getFullName() }}'s Timesheet - <small>{{currentUser.email}}</small></h3>
+                            <p class="print">If you have any questions, feel free to contact Andrea Miller, the Volunteer Coordinator, at (225) 767-4673 or email at volunteercoordinator@hospicebr.org.</p>
+                            <table class="uk-table uk-table-responsive uk-table-divider tm-timesheet" style="width: 100%; text-align: left;">
+                                <caption></caption>
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Name</th>
+                                        <th>Start Time</th>
+                                        <th>End Time</th>
+                                        <th>Hours Volunteered</th>
+                                        <th>Travel Time</th>
+                                        <th>Mileage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for entry in timesheet %}
+                                    <tr>
+                                        <td>{{ entry.volunteerDate.format('m/d/y') ?? "-" }}</td>
+                                        <td>{{ entry.volunteerName ?? "-" }}</td>
+                                        <td>{% if entry.startTime|length %}{{ entry.startTime|date("g:i A") }}{% else %}-{% endif %}</td>
+                                        <td>{% if entry.endTime|length %}{{ entry.endTime|date("g:i A") }}{% else %}-{% endif %}</td>
+                                        {# <td>{{ entry.totalVolunteeredHours ~ " HR" ?? "-" }}</td> #}
+                                        <td>
+                                            {# {% set difference = date(entry.startTime|date('g:i A')).diff(date(entry.endTime|date('g:i A'))) %}
+                                            {% set hours = difference.h %}
+                                            {% set minutes = difference.i %}
+                                            {{ hours > 0 ? hours ~ " HR" : "" }} {{ minutes > 0 ? minutes ~ " MIN" : "" }} #}
+                                            {{ entry.totalVolunteeredHours ~ " Hrs" }}
+                                        </td>
+                                        <td>{{ entry.travelTime ~ " Min" ?? "-" }}</td>
+                                        <td>{{ entry.mileage ~ " MI" ?? "-" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <p class="uk-text-center">Looks like there are currently nothing submitted yet!</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% else %}
+    <section class="uk-section uk-padding-remove-top">
+        <div class="uk-container">
+            <div class="uk-grid" uk-grid>
+                <div class="uk-width-1-1 uk-width-3-4@m">
+                    <form class="uk-form-stacked" method="post" accept-charset="UTF-8">
+                        {{ getCsrfInput() }}
+                        <input type="hidden" name="action" value="users/login">
+                        <input type="hidden" name="redirect" value="{{ craft.request.getUrl() }}">
+
+                        <div class="uk-grid uk-grid-small" uk-grid>
+                            <div class="uk-width-1-1">
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="loginName" type="text" name="loginName"
+                                    value="{{ craft.session.rememberedUsername }}"  placeholder="Email Address*" required>
+                                </div>
+                            </div>
+                            <div class="uk-width-1-1">
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="password" type="password" name="password" placeholder="Password*" required>
+                                </div>
+                             </div>
+                            <div class="uk-width-1-1">
+                                <div class="uk-form-controls">
+                                    <label class="uk-form-label uk-margin-small-left uk-width-1-1 rememberMe">
+                                        <input class="uk-checkbox" type="checkbox" name="rememberMe" value="1">
+                                        <span>Remember me</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="uk-width-1-1">
+                                <div class="uk-form-controls">
+                                    <button class="uk-button uk-button-primary" type="submit" value="Login">Sign In</button>
+                                    <a style="margin-left: 8px; line-height: 2.4;" class="left" href="/volunteer/forgotpassword">Forgot Password?</a>
+                                </div>
+                            </div>
+                            {% if errorMessage is defined %}
+                                <p class="errorMessage">{{ errorMessage }}</p>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+                <div class="uk-width-1-1 uk-width-1-4@m">
+                    <h6 class="center">Don't have a volunteer account?</h6>
+                    <a class="button" href="/volunteer/volunteer-registration">Volunteer Registration</a>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endif %}

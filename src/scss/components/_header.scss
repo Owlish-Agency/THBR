@@ -1,0 +1,283 @@
+.tm-tertiary-nav-container {
+    background: linear-gradient(to right, rgba(0,0,0,0.02),rgba(0,0,0,0.06));
+        height: 40px;
+    line-height: 40px;
+    .tm-tertiary {
+        .uk-search-input {
+            height: 30px;
+            background: transparent;
+            line-height: 1.2;
+        }
+        .tm-border-right {
+            padding-right: 15px;
+            &:before {
+                content: "";
+                border-right: 1px solid #999;
+                width: 1px;
+                position: absolute;
+                right: 0;
+                top: 10px;
+                height: 20px;
+            }
+
+        }
+        .tm-border-left {
+            padding-left: 15px;
+            &:after {
+                content: "";
+                border-left: 1px solid #999;
+                width: 1px;
+                position: absolute;
+                left: 0;
+                top: 10px;
+                height: 20px;
+            }
+        }
+        a, li {
+            font-size: 0.9em;
+            line-height: 40px;
+        }
+        li {
+            position: relative;
+            &.uk-active {
+                a {
+                    &:after {
+                        content: "";
+                        border-bottom: 1px solid $global-primary-color;
+                        width: 20px;
+                        bottom: 8px;
+                        position: absolute;
+                        left: 0;
+                        right: 0;
+                        margin: auto;
+                        visibility: visible;
+                    }
+                }
+            }
+            a {
+                &:after {
+                    content: "";
+                    border-bottom: 0px solid $global-primary-color;
+                    bottom: 0px;
+                    position: absolute;
+                    visibility: hidden;
+                    transition: .1s ease-in-out;
+                    left: 0;
+                    right: 0;
+                    margin: auto;
+                    width: 20px;
+                }
+                &:hover, &:focus, &:active {
+                    &:after {
+                        content: "";
+                        border-bottom: 1px solid $global-primary-color;
+                        width: 20px;
+                        bottom: 8px;
+                        left: 0;
+                        right: 0;
+                        margin: auto;
+                        visibility: visible;
+                    }
+                }
+            }
+        }
+    }
+}
+.tm-primary-nav-container {
+    box-shadow: 0px 2px 2px rgba(0,0,0,0.2);
+    .uk-navbar-left {
+        padding: 14px 0;
+    }
+    ul {
+        li {
+            margin: 0 10px;
+            @media (min-width: 960px) {
+                margin: 0 6px;
+            }
+            @media (min-width: 1020px) {
+                margin: 0 8px;
+            }
+            @media (min-width: $breakpoint-large) {
+                margin: 0 15px;
+            }
+            //position: relative;
+            &:last-child {
+                margin-right: 0;
+                &.tm-primary-featured {
+                    margin-right: 0;
+                }
+            }
+            &.tm-primary-featured {
+                margin: 0 6px;
+                &:hover, &:focus, &:active {
+                    .uk-button {
+                        color: $white;
+                    }
+                }
+            }
+            &.uk-active {
+                > a {
+                    &.uk-button {
+                        &:after {
+                            content: none;
+                        }
+                    }
+                    &:after {
+                        content: "";
+                        border-bottom: 1px solid $global-primary-color;
+                        width: 100%;
+                        bottom: 25px;
+                        position: absolute;
+                        left: 0;
+                        right: 0;
+                        margin: auto;
+                        visibility: visible;
+                    }
+                }
+            }
+            a {
+                padding: 0;
+                height: 92px;
+                position: relative;
+                font-size: 0.8em;
+                @media (min-width: 960px) {
+                    font-size: 0.85em;
+                }
+                @media (min-width: 1020px) {
+                    font-size: 0.85em;
+                }
+                @media (min-width: $breakpoint-large) {
+                    font-size: 0.9em;
+                }
+                &:after {
+                    content: "";
+                    border-bottom: 0px solid $global-primary-color;
+                    bottom: 15px;
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    margin: auto;
+                    visibility: hidden;
+                    transition: .1s ease-in-out;
+                }
+                &:hover, &:focus, &:active {
+                    &:after {
+                        content: "";
+                        border-bottom: 1px solid $global-primary-color;
+                        width: 100%;
+                        bottom: 25px;
+                        visibility: visible;
+                    }
+                }
+                &.uk-button {
+                        padding: 0 12px !important;
+                        height: inherit;
+                        box-shadow: none;
+                        font-size: 0.8em;
+                        line-height: 28px;
+                    @media (min-width: 960px) {
+                        padding: 0 12px !important;
+                        font-size: 0.85em;
+                    }
+                    @media (min-width: $breakpoint-large) {
+                        padding: 0 18px !important;
+                        line-height: 40px;
+                        font-size: 0.9em;
+                    }
+                     &:hover, &:focus, &:active {
+                        border-color: inherit;
+                        &.uk-button-primary {
+                            border-color: $global-primary-color;
+                        }
+                        &:after {
+                            content: none;
+                        }
+                    }
+                }
+
+            }
+        }
+        ul {
+            li {
+                margin: 0 15px 15px;
+                position: relative;
+                line-height: 1.2;
+                a {
+                    height: auto;
+                    line-height: 1.5;
+                    text-transform: uppercase;
+                    font-size: 0.9em;
+                    display: inline;
+                    position: relative;
+                    transition: .1s ease-in-out;
+                    &:after {
+                        content: "";
+                        border-bottom: 0px solid $global-primary-color;
+                        bottom: -12px;
+                        right: 0px;
+                        left: 0px;
+                        position: absolute;
+                        display: block;
+                        visibility: hidden;
+                        transition: .1s ease-in-out;
+                    }
+                    &:hover, &:focus, &:active {
+                        &:after {
+                            border-bottom: 1px solid $global-primary-color;
+                            width: auto;
+                            bottom: -6px;
+                            visibility: visible;
+                        }
+                    }
+                }
+                &:last-child {
+                    margin-right: 15px;
+                }
+                &.uk-active {
+                    a {
+                        &:after {
+                            content: "";
+                            border-bottom: 1px solid $global-primary-color;
+                            width: 100%;
+                            bottom: -6px;
+                            position: absolute;
+                            left: 0;
+                        }
+                    }
+                }
+            }
+        }
+        .uk-navbar-dropdown {
+            padding: 30px 15px 15px;
+            background: linear-gradient(180deg,#b6b6b6 0,#f7f7f7 4px,#fff);
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            box-shadow: 0 5px 12px rgba(0,0,0,.2);
+            width: auto;
+        }
+    }
+}
+.tm-brand {
+    img {
+        width: 200px;
+        max-width: 100%;
+        @media (min-width: 960px) {
+            width: 200px;
+        }
+        @media (min-width: 1100px) {
+            width: 276px;
+        }
+        .palliative-care-of-baton-rouge & {
+            max-width: 120px;
+            @media (min-width: $breakpoint-medium) {
+                width: 165px;
+            }
+        }
+    }
+}
+.tm-mobile-nav {
+    padding: 35px;
+}
+.uk-nav {
+    position: relative;
+}

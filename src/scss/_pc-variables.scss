@@ -1,0 +1,124 @@
+//Globals
+$global-color: #666666;
+$global-primary-color: #4AC9E3;
+$global-emphasis-color: #074F71;
+$blue: #1B5E9B;
+$light-blue:  #074F71;
+$white: #ffffff;
+$black: #000000;
+$background-gray: #EBEBEB;
+
+//Fonts
+$global-font-family: "Gotham SSm A", "Gotham SSm B";
+$banner1: "Sentinel A", "Sentinel B";
+$banner2: "Alternate Gothic W05 No_1";
+
+// Base
+$base-h1-font-size: 3.25em;
+$base-h2-font-size: 2.5em;
+$base-h3-font-size: 2.125em;
+$base-h4-font-size: 1.75em;
+$base-h5-font-size: 1.425em;
+$base-h6-font-size: 1em;
+$base-body-line-height: 1.9;
+$base-body-font-weight: 300;
+$base-heading-font-weight: 400;
+$base-link-color: $global-primary-color;
+$base-link-text-decoration: none;
+$base-link-hover-color: darken($global-primary-color, 10%);
+$base-link-hover-text-decoration: none;
+$base-blockquote-font-size: 16px;
+$base-blockquote-footer-font-size: 1.5em;
+$inverse-base-color: $white;
+$base-em-color: $global-color;
+
+// Button
+$button-font-size: 0.9em;
+$button-line-height: 1.4em;
+$button-default-background: transparent;
+$button-default-color: $global-color;
+$button-default-hover-background: $global-color;
+$button-default-hover-color: $white;
+$button-default-active-background: $global-color;
+$button-default-active-color: $white;
+$button-primary-background: $global-primary-color;
+$button-primary-color: $white;
+$button-primary-hover-background: darken($global-primary-color, 10%);
+$button-primary-hover-color: $white;
+$button-primary-active-background: darken($global-primary-color, 10%);
+$button-primary-active-color: $white;
+$inverse-button-primary-background: $global-primary-color;
+$inverse-button-primary-color: $white;
+$inverse-button-primary-hover-background: darken($global-primary-color, 10%);
+$inverse-button-primary-hover-color: $white;
+$button-large-line-height: 1.4em;
+
+// Description
+$description-list-term-color: $global-color;
+
+// Form
+$form-height: 50px;
+$form-color: $global-color;
+
+// Nav Bar
+$navbar-nav-item-height: auto;
+$navbar-nav-item-hover-color: none;
+$navbar-nav-item-hover-color: inherit;
+$navbar-nav-item-font-size: inherit;
+$navbar-dropdown-nav-item-active-color: $global-primary-color;
+$navbar-nav-item-active-color: $global-primary-color;
+
+// Typography
+$text-lead-font-size: 1.125em;
+$text-lead-font-weight: 1.7;
+$text-lead-color: $global-color;
+
+// Icons
+$icon-button-size: 60px;
+
+// Section
+$section-muted-background: #f1f1f1;
+$section-padding-vertical-m: 70px;
+$section-padding-vertical: 30px;
+$grid-small-gutter-vertical: 30px;
+
+// Card
+$card-default-background: $white;
+$card-primary-background: $white;
+$card-primary-color: $global-color;
+$card-primary-title-color: $white;
+$card-primary-hover-background: $global-color;
+$card-primary-color-mode: dark;
+$card-title-font-size: 1.4em;
+
+$card-default-hover-background: $global-primary-color;
+
+// Search
+$search-default-width: 100%;
+
+// Grid
+$grid-gutter-vertical-l: $section-padding-vertical-m;
+$grid-gutter-vertical: $section-padding-vertical;
+
+// Subnav
+$subnav-item-active-color: $global-primary-color;
+
+// Notifications
+$notification-width: 100%;
+$notification-message-color: $white;
+$notification-message-background: $global-primary-color;
+$notification-message-success-color: #f8f8f8;
+$notification-position: 0;
+$notification-message-padding: 30px;
+
+
+// Off Canvas
+
+$offcanvas-bar-background: $white;
+$offcanvas-bar-color-mode: dark;
+
+$inverse-base-link-hover-color: hsla(0,0%,100%,.5);
+
+// Lists
+$list-striped-padding-vertical: 20px;
+$list-striped-padding-horizontal: 20px;

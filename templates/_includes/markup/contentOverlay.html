@@ -1,0 +1,42 @@
+{%- set element = element is defined ? element : {} -%}
+{%- set startingMediaText = startingMediaText ?? element["startingMediaText"] ?? "" -%}
+{%- set endingMediaText = endingMediaText ?? element["endingMediaText"] ?? "" -%}
+
+<div class=" uk-container">
+    <div class="uk-grid uk-flex-center" uk-grid>
+        <div class="uk-width-1-1 uk-width-3-4@m">
+            <div class="js-startingCopy">
+                {%- if startingMediaText|length -%}
+                    {% if startingMediaText.leadIn|length %}
+                        <p class="tm-subtitle uk-margin-remove">{{ startingMediaText.leadIn }}</p>
+                    {% endif %}
+                    {% if startingMediaText.description|length %}
+                        <h3 class="uk-margin-remove">{{ startingMediaText.description|striptags }}</h3>
+                    {% endif %}
+                {%- endif -%}
+                <div class="content-overlay-play uk-margin-top">
+                    <a href="#js-video" class="js-play uk-icon-button" uk-icon="icon: play; ratio: 2">
+                    </a>
+                </div>
+            </div>
+            <div class="js-endingCopy">
+                {%- if endingMediaText|length -%}
+                        {% if endingMediaText.leadIn|length %}
+                        <p class="tm-subtitle uk-margin-remove">{{ endingMediaText.leadIn }}</p>
+                    {% endif %}
+                    {% if endingMediaText.description|length %}
+                        <h3 class="uk-margin-remove">{{ endingMediaText.description|striptags }}</h3>
+                    {% endif %}
+                    {% if endingMediaText.linkIt|length %}
+                        <a class="uk-button" target="{{ endingMediaText.linkIt.target }}" href="{{ endingMediaText.linkIt.url }}">{{ endingMediaText.linkIt.text }}</a>
+                    {% endif %}
+                {%- endif -%}
+                <div class="content-overlay-replay uk-margin-top-remove">
+                    <a href="#js-video" class="js-play">
+                        Replay Video
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

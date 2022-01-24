@@ -1,0 +1,48 @@
+{%- set block = block ?? {} -%}
+{%- set backgroundColor = backgroundColor ?? block["backgroundColor"] ?? "" -%}
+{%- set backgroundImage = backgroundImage ?? block["backgroundImage"] ?? "" -%}
+{%- set containSection = containSection ?? block["containSection"] ?? true -%}
+{%- set sectionContent = sectionContent ?? "" -%}
+{%- set sectionFormat = sectionFormat ?? block["sectionFormat"] ?? "grid" -%}
+{%- set sectionSpacing = sectionSpacing ?? block["sectionSpacing"] ?? "" -%}
+{%- set sectionStyles = sectionStyles ?? block["sectionStyles"] ?? [] -%}
+{%- set gridStyles = gridStyles ?? block["gridStyles"] ?? [] -%}
+
+{%- set class =  [
+    sectionSpacing|length ? sectionSpacing,
+    sectionStyles is iterable ? sectionStyles|join(" ") : sectionStyles,
+    backgroundColor|length ? backgroundColor,
+    class ?? "",
+]|filter|join(" ") -%}
+
+{#- Size the image @ 50% if it looks like a retina image -#}
+{%- set style =  [
+    backgroundImage|length ? "background-image: url(#{backgroundImage[0].url})",
+    backgroundImage|length and ('@2x' in backgroundImage[0].filename and "bg-cover" not in class) ? "background-size: #{(backgroundImage[0].width / 2)}px #{(backgroundImage[0].height / 2)}px",
+    style ?? "",
+]|filter|join("; ") -%}
+
+{%- set gridClass =  [
+    (sectionFormat == "flow" ? "uk-clearfix" : "uk-grid"),
+    gridStyles is iterable ? gridStyles|join(" ") : gridStyles,
+    backgroundColor|length ? backgroundColor,
+    gridClass ?? "",
+]|filter|join(" ") -%}
+
+{%- set isBlock = class|length or style|length ? true : false %}
+
+{% if isBlock %}
+    <div{%- if class|length %} class="{{ class }}"{%- endif -%}{%- if style|length %} style="{{ style }}"{%- endif -%}>
+{% endif %}
+    {%- if containSection -%}
+        <div class="uk-container uk-container-center">
+    {%- endif -%}
+        <div class="{{ gridClass }}"{%- if "uk-grid" in gridClass %} data-uk-grid-margin{%- endif -%}>
+            {{ sectionContent }}
+        </div>
+    {%- if containSection -%}
+        </div>
+    {%- endif -%}
+{% if isBlock|length %}
+    </div>
+{% endif %}

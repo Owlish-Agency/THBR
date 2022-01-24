@@ -1,0 +1,22 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+
+{%- set quote = quote ?? block["quote"] ?? "" -%}
+{%- set fullName = fullName ?? block["fullName"] ?? "" -%}
+
+{%- set content -%}
+    <div class="uk-grid uk-flex uk-flex-center" uk-grid>
+        <div class="uk-width-1-1 uk-width-3-4@m">
+            <blockquote>
+                <p class="uk-margin-small-bottom">{{ quote|striptags }}</p>
+                <footer>{{ fullName }}</footer>
+            </blockquote>
+        </div>
+    </div>
+{%- endset -%}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+}) }}

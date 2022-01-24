@@ -1,0 +1,13 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set lineStyle = lineStyle ?? block["lineStyle"] ?? "tm-thick-centered" -%}
+
+{%- set content -%}
+    <hr class="{{ lineStyle }}" />
+{%- endset -%}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+}) }}

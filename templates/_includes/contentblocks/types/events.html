@@ -1,0 +1,20 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set program = program ?? block["program"] ?? null -%}
+{%- set section = section ?? null -%}
+
+
+{%- set content -%}
+    {% include "_includes/listings/events" with {
+        program: program|length ? program[0].id : null,
+    } %}
+{%- endset -%}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+    section: section,
+}) }}
+
+

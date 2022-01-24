@@ -1,0 +1,169 @@
+{%- import "_includes/contentkit/macros/images" as m_image -%}
+
+{%- set switch = switch ?? false -%}
+{%- set showFormTitle = showFormTitle ?? block["showFormTitle"] ?? false %}
+{%- set showFormDescription = showFormDescription ?? block["showFormDescription"] ?? false %}
+{%- set wrapFormInPanel = wrapFormInPanel ?? block["wrapFormInPanel"] ?? false -%}
+{%- set successFlashMessage = successFlashMessage is defined ? successFlashMessage : form["successMessage"]|default("Your message has been sent.") -%}
+{%- set backgroundImage = backgroundImage ?? block["backgroundImage"] ?? [] -%}
+
+{% if wrapFormInPanel == true %}
+<div class="uk-panel uk-panel-box tm-panel-outline">
+{% endif %}
+{% if backgroundImage|length %}
+    {{ m_image.backgroundImage({
+        backgroundImage: backgroundImage[0],
+        sectionContained: section["containSection"] ?? false,
+        cropRatio: {
+            "mini": "350:375",
+            "small": "717:374",
+            "medium": "909:374",
+            "large": "1130:375",
+            "xlarge": "1130:375",
+        }
+    }) }}
+    <div class="uk-flex uk-flex-center background-image-{{ backgroundImage.first().id }} tm-call-to-action tm-call-to-action-underline tm-cover uk-contrast tm-text-shadow uk-text-center ">
+        <div class="uk-width-1-1 uk-width-medium-8-10 uk-flex uk-flex-middle">
+            <div>
+{% endif %}
+    {{ form.renderTag({
+        class: "uk-form uk-form-stacked",
+        labelClass: "uk-form-label",
+        submitClass: "uk-button uk-button-primary",
+    }) }}
+    {% if switch == false %}
+        <input type="hidden" name="parentId" id="form-input-test" value="{{ block.id }}">
+    {% endif %}
+    <input type="hidden" name="notice" value="{{ successFlashMessage }}" />
+    {% if form.hasErrors %}
+        {% set notifyJs %}
+            UIkit.notification({
+                message : 'There was an error submitting this form',
+                status  : 'danger',
+                timeout : 5000,
+                pos     : 'top-center'
+            });
+        {% endset %}
+        {% includejs notifyJs %}
+        <div class="uk-alert uk-alert-danger">
+            {{ "There was an error submitting this form"|t }}
+        </div>
+    {% endif %}
+    {% if showFormTitle %}
+        <h3 class="uk-margin-remove">{{ form.name }}</h3>
+    {% endif %}
+    {% if showFormDescription %}
+        <p class="uk-margin-top-remove">{{ form.description }}</p>
+    {% endif %}
+        <div class="uk-grid uk-grid-small" data-uk-grid-margin>
+            {% for row in form %}
+                {% for field in row %}
+                    {# {% set columnClass = columnClass ~ (field.errors|length ? " uk-text-danger" : "") %} #}
+
+                    <div class="uk-width-1-1 uk-width-1-{{ row|length }}@m uk-grid-margin">
+                        {% if field.type in ["checkbox","checkbox_group", "radio_group", "file"] %}
+                            <label class="uk-form-label uk-width-1-1 {% if field.errors|length %}uk-form-danger{% endif %}" for="form-input-{{ field.handle }}">
+                                {{ field.label }}
+                                {%- if field.required -%}
+                                    <sup class="uk-text-danger">*</sup>
+                                {%- endif -%}
+                            </label>
+                        {% endif %}
+                        <div class="uk-form-controls">
+                            {% if field.handle|lower ends with "date" %}
+                                <div class="uk-form-icon uk-width-1-1">
+                                    <i class="uk-icon-calendar"></i>
+                                    {{ field.renderInput({
+                                        class: "uk-width-1-1#{field.errors|length ? ' uk-form-danger'}",
+                                        inputAttributes: {
+                                            "data-uk-datepicker": "{weekstart:0, format:'DD.MM.YYYY'}",
+                                        },
+                                    }) }}
+                                </div>
+                            {% elseif field.handle|lower ends with "time" %}
+                                <div class="uk-form-icon uk-width-1-1">
+                                    <i class="uk-icon-clock-o"></i>
+                                    {{ field.renderInput({
+                                        class: "uk-width-1-1#{field.errors|length ? ' uk-form-danger'}",
+                                        errorClass: "uk-form-danger",
+                                        inputAttributes: {
+                                            "data-uk-timepicker": "{format:'12h'}",
+                                        },
+                                    }) }}
+                                </div>
+                            {% elseif field.type == "checkbox_group" %}
+                                {% for option in field.options %}
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox"
+                                                name="{{ field.handle }}[]"
+                                                value="{{ option.value }}"
+                                                {{ option.checked ? "checked" : "" }}
+                                            />
+                                            {{ option.label }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            {% elseif field.type == "checkbox" %}
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox"
+                                               name="{{ field.handle }}[]"
+                                               value="{{ field.value }}"
+                                                {{ field.checked ? "checked" : "" }}
+                                            />
+                                            {{ field.label }}
+                                        </label>
+                                    </div>
+                            {# {% elseif field.type == "submit" %}
+                                <a class="uk-button uk-button-primary" href="">test</a> #}
+                            {% elseif field.type == "radio_group" or (field.type == "dynamic_recipients" and field.showAsRadio) %}
+                                {% for option in field.options %}
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio"
+                                                   name="{{ field.handle }}"
+                                                   value="{{ option.value }}"
+                                                    {{ option.checked ? "checked" : "" }}
+                                            />
+                                            {{ option.label }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ field.renderInput({
+                                    class: (field.type in ["phone"] ? "uk-phone uk-width-1-1 uk-input uk-grid-margin" : (field.type in ["submit"] ? "" : field.type in ["textarea"] ? "uk-textarea" : field.type in ["select"] ? "uk-select" : "uk-width-1-1 uk-input uk-grid-margin") ~ "#{field.errors|length ? ' uk-form-danger'}"),
+                                    placeholder: field.label,
+                                }) }}
+                            {% endif %}
+                            {% for error in field.getErrors %}
+                                <div class="uk-form-help-block">
+                                    <p class="uk-text-danger uk-margin-remove"><small>{{ error }}</small></p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if field.instructions %}
+                            <div class="uk-form-help-block">
+                                {{ field.instructions }}
+                                {% if field.errors %}
+                                    {% for errorString in field.errors %}
+                                        {{ field }}
+                                        <div class="uk-text-danger">{{ errorString }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+
+    {{ form.renderClosingTag }}
+{% if backgroundImage|length %}
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% if wrapFormInPanel == true %}
+</div>
+{% endif %}

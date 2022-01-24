@@ -1,0 +1,31 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set text = text ?? block["text"] ?? "" -%}
+{%- set links = links ?? block["buttonLink"] ?? "" -%}
+{%- set section = section ?? null -%}
+
+{%- set content -%}
+    <div>
+    {{ text }}
+        {% if links|length %}
+            <ul class="tm-list">
+                {% for link in links %}
+                    {% if link.linkIt|length %}
+                    <li>
+                        <a class="{{ link.style }}" href="{{ link.linkIt.url }}" {%- if link.linkIt.target ?? "" %} target="{{ link.linkIt.target }}"{% endif %} {% if link.style == "uk-link" %} uk-icon="arrow-right" {%- endif -%}>
+                            {{ link.linkIt.text }}
+                        </a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+{%- endset -%}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+    section: section,
+}) }}

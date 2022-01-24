@@ -1,0 +1,7 @@
+{%- set placeholder = placeholder ?? "..." -%}
+{%- set query = query ?? "" -%}
+
+<form class="uk-search uk-search-default" action="/search">
+    <span uk-search-icon></span>
+    <input class="uk-search-input uk-width-1-1" type="search" name="query" placeholder="{{ placeholder }}.." value="{{ query }}" type="text">
+</form>

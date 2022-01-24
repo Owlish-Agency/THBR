@@ -1,0 +1,91 @@
+{%- set page = craft.request.lastSegment() -%}
+
+{% import "_macros/markup" as macros %}
+
+{# Alert Messaging #}
+{% if alertMessaging is defined and alertMessaging.activateAlertMessage == "1" %}
+    <div class="uk-alert uk-alert-danger" data-uk-alert>
+        <a href="" class="uk-alert-close uk-close"></a>
+        <div class="uk-grid">
+            <div class="uk-width-1-1">
+                <div class="uk-container uk-container-center">
+                    {% if alertMessaging.alertMessage|length %}
+                        {{ alertMessaging.alertMessage }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% cache globally using key "header-" ~ craft.request.path if craft.config.cache %}
+    {% minify %}
+        <header>
+            <div class="tm-tertiary-nav-container uk-visible@m">
+                <div class="uk-container uk-container-center">
+                    <nav class="uk-navbar tm-tertiary">
+                        <div class="uk-navbar-right">
+                            <ul class="uk-nav uk-navbar-nav" id="tertiary-nav">
+                                {% if header.navigationSearch.showSearch == 1 %}
+                                    <li class="tm-border-right">
+                                        {% include "_includes/markup/search" with {
+                                            placeholder: "search..."
+                                        } %}
+                                    </li>
+                                {% endif %}
+                                {% if header.tertiaryNavigation is defined and header.tertiaryNavigation|length %}
+                                    {{ macros.list_navigation(header.tertiaryNavigation, "") }}
+                                {% endif %}
+                                {% if header.navigationPhoneNumber.showPhoneNumber == 1 %}
+                                    <li class="tm-border-left">
+                                        {{ header.navigationPhoneNumber.phoneNumber }}
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+            <div class="tm-primary-nav-container">
+                <div class="uk-container uk-container-center">
+                    <nav class="uk-navbar" uk-navbar>
+                        <div class="uk-navbar-left">
+                            <a class="uk-navbar-brand uk-padding-remove tm-brand" href="/">
+                                {% if "palliative-care-of-baton-rouge" in craft.request.getSegments() %}
+                                    <img src="/img/pcbr_logo.svg" title="Palliative Care Logo" alt="Palliative Care" class=""/>
+                                {% else %}
+                                    {% if header.logo is defined and header.logo|length %}
+                                        <img src="{{ header.logo[0].url() }}" title="The Hospice of Baton Rouge Logo" alt="{{ siteName }}" class=""/>
+                                    {% endif %}
+                                {% endif %}
+                            </a>
+                        </div>
+                        <div class="uk-navbar-right uk-visible@m">
+                            <ul class="uk-nav uk-navbar-nav " id="primary-nav">
+                                {% if header.primaryNavigationLinks is defined and header.primaryNavigationLinks|length %}
+                                    {{ macros.list_navigation(header.primaryNavigationLinks, "") }}
+                                {% endif %}
+                                {% if header.featuredNavigationLinks is defined and header.featuredNavigationLinks|length %}
+                                    {{ macros.list_navigationFeatured(header.featuredNavigationLinks, "tm-primary-featured uk-flex uk-flex-middle") }}
+                                {% endif %}
+                            </ul>
+                        </div>
+                        <div class="uk-navbar-right uk-hidden@m">
+                            <a href="#offcanvas-slide" class="uk-navbar-toggle" uk-navbar-toggle-icon uk-toggle></a>
+                            <div id="offcanvas-slide" uk-offcanvas="flip: true; overlay: true">
+                                <div class="uk-offcanvas-bar">
+                                    <button class="uk-offcanvas-close uk-padding-remove" type="button" uk-close></button>
+                                    <ul class="uk-nav-default uk-nav-parent-icon uk-flex-middle tm-mobile-nav" uk-nav>
+                                    {% if header.primaryNavigationLinks is defined and header.primaryNavigationLinks|length %}
+                                        {{ macros.list_mobileNavigation(header.primaryNavigationLinks, header.featuredNavigationLinks, header.tertiaryNavigation, "", "") }}
+                                    {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </header>
+    {% endminify %}
+{% endcache %}

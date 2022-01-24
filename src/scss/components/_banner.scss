@@ -1,0 +1,174 @@
+.uk-slideshow-items {
+    font-size: 11px;
+    @media (min-width: $breakpoint-small) {
+        font-size: 16px;
+    }
+    .tm-heading-one {
+        font-family: $banner1;
+        font-size: 1.2em;
+        line-height: 1.3em;
+        @media (min-width: $breakpoint-small) {
+            font-size: 2.2em;
+            line-height: 1.3em;
+        }
+        @media (min-width: $breakpoint-large) {
+            font-size: 3.125em;
+            line-height: 1.3em;
+        }
+    }
+    .tm-heading-two {
+        font-family: $banner2;
+        text-transform: uppercase;
+        font-size: 4.6em;
+        line-height: 0.8em;
+        @media (min-width: $breakpoint-small) {
+            font-size: 8.6em;
+            line-height: 0.8em;
+        }
+        @media (min-width: $breakpoint-large) {
+            font-size: 13.4em;
+            line-height: 0.8em;
+        }
+    }
+    address, dl, fieldset, figure, ol, p, pre, ul {
+        margin-top: 10px;
+        @media screen and (min-width: $breakpoint-small) {
+            margin-top: 20px;
+        }
+    }
+    .uk-overlay {
+        padding: 40px;
+        @media screen and (min-width: $breakpoint-small) {
+            padding: 30px;
+        }
+    }
+    .uk-h1, .uk-h2, .uk-h3, .uk-h4, .uk-h5, .uk-h6, h1, h2, h3, h4, h5, h6 {
+        margin: 0 0 10px;
+        color: $white;
+        @media screen and (min-width: $breakpoint-small) {
+            margin: 0 0 20px;
+        }
+    }
+    *+address, *+dl, *+fieldset, *+figure, *+ol, *+p, *+pre, *+ul {
+        margin: 0 0 10px;
+        color: $white;
+        @media screen and (min-width: $breakpoint-small) {
+            margin: 0 0 20px;
+        }
+    }
+    .tm-carousel-image--links {
+        margin-top: 10px;
+        @media screen and (min-width: $breakpoint-small) {
+            margin-top: 30px;
+        }
+        > div {
+            margin-top: 10px !important;
+            @media screen and (min-width: $breakpoint-small) {
+                margin-top: 30px !important;
+            }
+        }
+    }
+}
+.tm-carousel-image {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    .tm-carousel-image--links {
+        .tm-carousel-image--link {
+            width: auto;
+            @media (min-width: $breakpoint-medium) {
+                width: 100%;
+            }
+        }
+    }
+    .tm-carousel-image--link {
+        padding: 8px 30px!important;
+        @media (min-width: $breakpoint-medium) {
+            padding: 12px 30px!important;
+        }
+    }
+}
+.uk-slideshow-items .tm-scroll {
+    &:before, &:after {
+        content: none;
+    }
+    @media (min-width: $breakpoint-medium) {
+        &:before, &:after {
+            content: "";
+            height: 0;
+            max-width: 540px;
+            background-position: 50% 50%;
+            position: absolute;
+            z-index: 9999999;
+            display: block;
+            margin: 0 auto;
+            background-repeat: no-repeat;
+            left: 0;
+            right: 0;
+        }
+        &:before {
+            background-image: url('/img/thbr_homepage_banner_top.svg');
+            top: 8%;
+            padding-bottom: 6%;
+            content: "";
+            height: 0;
+            max-width: 540px;
+            background-position: 50% 50%;
+            position: absolute;
+            z-index: 9999999;
+            display: block;
+            margin: 0 auto;
+            background-repeat: no-repeat;
+            left: 0;
+            right: 0;
+        }
+        &:after {
+            background-image: url('/img/thbr_homepage_banner_bottom.svg');
+            bottom: 11.2%;
+            padding-bottom: 15.2%;
+            content: "";
+            height: 0;
+            max-width: 540px;
+            background-position: 50% 50%;
+            position: absolute;
+            z-index: 9999999;
+            display: block;
+            margin: 0 auto;
+            background-repeat: no-repeat;
+            left: 0;
+            right: 0;
+        }
+    }
+}
+.tm-banner {
+    text-shadow: 0 1px 1px #000;
+    min-height: 200px;
+    height: 100%;
+    @media (min-width: $breakpoint-medium) {
+            min-height: 450px;
+        }
+    h3 {
+        padding: 0 10px;
+        @media (min-width: $breakpoint-medium) {
+            padding: 0;
+        }
+    }
+}
+.tm-banner-logo {
+    max-height: 190px;
+    max-width: 320px;
+    padding: 0 20px;
+    width: auto;
+    @media (min-width: $breakpoint-medium) {
+        max-height: 290px;
+        padding: 0px;
+    }
+    &.large {
+        @media (min-width: $breakpoint-small) {
+            max-width: 360px;
+        }
+        @media (min-width: $breakpoint-medium) {
+            max-width: 580px;
+        }
+    }
+}

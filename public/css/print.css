@@ -1,0 +1,10 @@
+.print {
+    display: block;
+}
+.no-print{
+    display: none;
+    visibility: hidden;
+}
+.print-image {
+    width: 300px !important;
+}

@@ -1,0 +1,125 @@
+{% macro link(options = {}) %}
+    {%- set sourceElement = options.sourceElement ?? {} -%}
+    {%- set reference = options.reference ?? {} -%}
+    {%- set isButton = options.isButton ?? false -%}
+    {%- set matchProtocol = '/(https?:\\/\\/)/' %}
+    {# Remove everything after the first matching slash
+     # important to remove http://|https:// before using
+     # @todo: Find safer way of returning domain and TLD
+     #}
+    {%- set matchPath = '/(\\/\\S+)/' -%}
+    {#
+     # reference.type - email, custom, tel, entry, category or asset
+     # reference.url
+     # reference.text
+     #}
+    {%- set title = reference.type == "asset" and reference.element ?? null ? reference.element.filename : null %}
+    <a href="{{ reference.url }}" target="_blank" class="{%- if isButton %}uk-button {% endif %}gtm-resource-action tm-hide-external" {%- if title %} title="{{ title }}"{%- endif -%} data-title="{{ sourceElement.title }}" data-type="{% if reference.type == 'custom' %}Link{% else %}Asset{% endif %}">
+        {%- switch reference.type -%}
+            {%- case "custom" -%}
+                <i class="uk-icon-justify uk-icon-globe" aria-hidden="true"></i>
+                {# Replace http(s)// and path for pretty URLs (i.e. example.com instead of http://example.com/xyz) #}
+                Go to {{ reference.url|replace(matchProtocol, '')|replace(matchPath, '') }}
+            {%- default -%}
+                <i class="uk-icon-justify uk-icon-arrow-circle-o-down" aria-hidden="true"></i> Download
+                {%- if reference.type == "asset" and reference.element ?? null %}
+                    <dl class="uk-description-list-horizontal tm-meta-description-list uk-margin-remove">
+                        <dt>File</dt>
+                        <dd>{{ reference.element.title }}</dd>
+                        <dt>Type</dt>
+                        <dd>{{ reference.element.extension }}</dd>
+                        <dt>Size</dt>
+                        <dd>{{ reference.element.size|filesize }}</dd>
+                    </dl>
+                {% endif %}
+        {%- endswitch -%}
+
+    </a>
+{% endmacro %}
+
+{% macro listItems(options = {}) %}
+    {%- from _self import link as m_link -%}
+    {%- set references = options.references ?? [] -%}
+    {%- set sourceElement = options.sourceElement ?? {} -%}
+    {%- set isSingle = options.isSingle ?? false -%}
+
+    {% if (sourceElement.type == 'videos') or (sourceElement.type == 'courses') %}
+        {% if not isSingle %}
+            {%- switch sourceElement.type -%}
+                {% case 'videos' %}
+                    {% if sourceElement.embedUrl|length %}
+                        {% set sourceMeta = {icon: 'uk-icon-play-circle', label: 'View video' } -%}
+                    {% else %}
+                        {% set sourceMeta = {icon: 'uk-icon-info', label: 'View details' } -%}
+                    {% endif %}
+                {% case 'courses' %}
+                    {% set sourceMeta = {icon: 'uk-icon-arrow-circle-o-right', label: 'View course' } -%}
+                {% default %}
+                    {% set sourceMeta = {icon: '', label: '' } -%}
+            {%- endswitch %}
+            <li>
+                <a href="{{ sourceElement.url }}" class="gtm-resource-action" data-title="{{ sourceElement.title }}" data-type="{% if sourceElement.type == 'videos' %}Video{% else %}Courses{% endif %}">
+                    <i class="uk-icon-justify {{ sourceMeta.icon }}" aria-hidden="true"></i>
+                    {{ sourceMeta.label }}
+                </a>
+            </li>
+        {% endif %}
+    {% endif %}
+    {% for reference in references %}
+        <li>{{ m_link({ reference: reference.reference, isButton: false, sourceElement: sourceElement }) }}</li>
+    {% endfor %}
+    {% if (sourceElement.type == "tools") or (sourceElement.type == "guides") %}
+        {% if not isSingle %}
+            <li>
+                <a href="{{ sourceElement.url }}">
+                    <i class="uk-icon-justify uk-icon-info" aria-hidden="true"></i>
+                    View details
+                </a>
+            </li>
+        {% endif %}
+    {% endif %}
+    <li>
+        {% include "_includes/markup/share" with {
+            url: sourceElement.url,
+            title: sourceElement.title,
+            section: sourceElement.getSection()|trim('s'),
+            isButton: false,
+        } %}
+    </li>
+    <li>
+        <a href="/resources/provide-feedback?resource={{sourceElement}}">
+            <i class="uk-icon-justify uk-icon-comment-o" aria-hidden="true"></i>
+            Provide feedback
+        </a>
+    </li>
+{% endmacro %}
+
+{% macro button(options = {}) %}
+    {%- from _self import listItems as m_listItems -%}
+    {%- set references = options.references ?? [] -%}
+    {%- set sourceElement = options.sourceElement ?? {} -%}
+    {%- set isSingle = options.isSingle ?? false -%}
+
+    {# This is the container enabling the JavaScript #}
+    <div class="uk-button-dropdown" data-uk-dropdown="{mode:'click', pos: 'bottom-center'}">
+        {# This is the button toggling the dropdown #}
+        <button class="uk-button tm-button-muted">Options <i class="uk-icon-caret-down"></i></button>
+        {# This is the dropdown #}
+        <div class="uk-dropdown uk-dropdown-small">
+            <ul class="uk-nav uk-nav-dropdown uk-text-left tm-dropdown-max-width">
+                {{ m_listItems({ references: references, sourceElement: sourceElement, isSingle: isSingle, }) }}
+            </ul>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro list(options = {}) %}
+    {%- from _self import listItems as m_listItems -%}
+    {%- set references = options.references ?? [] -%}
+    {%- set sourceElement = options.sourceElement ?? {} -%}
+    {%- set isSingle = options.isSingle ?? false -%}
+
+    <ul class="uk-list uk-list-line uk-text-left">
+        {{ m_listItems({ references: references, sourceElement: sourceElement, isSingle: isSingle }) }}
+    </ul>
+{% endmacro %}

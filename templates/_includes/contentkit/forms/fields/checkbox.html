@@ -1,0 +1,44 @@
+{# Also used for radio fields by setting field.type to radio #}
+{%- set field = field ?? {} -%}
+{%- set name = field["name"] ?? field["label"] ?? "" -%}
+{%- set selectedValue = field["selectedValue"] ?? "" -%}
+{%- set type = field.type ?? "" -%}
+{%- set errors = errors ?? null -%}
+
+{%- set class = [
+    (class is defined and class ? class : null),
+    (disabled is defined and disabled ? 'disabled' : null),
+    (width is defined and width ? width),
+]|filter|join(' ') %}
+
+{%- for option in field["options"] -%}
+    {%- set label = option["label"] ?? "" -%}
+    {%- set id = option["id"] ?? 'f_' ~ random()  -%}
+    {%- set value = option["value"] ?? null -%}
+    {%- set class = option["class"] ?? null -%}
+    {%- set attributes = option["attributes"] ?? null %}
+    {%- set instructions = option["instructions"] ?? "" -%}
+    {%- set checked = selectedValue == value ? true :
+            selectedValue|length and selectedValue != value ? false :
+            option["checked"]|default(false) -%}
+    {%- set class = [
+        (class),
+        errors ? "uk-form-danger",
+    ]|filter|join(' ') %}
+    <label>
+        <input
+            class="{{ class }}"
+            type="{{ type }}"
+            name="{{ name }}{{- (type == "checkbox" and option|length > 1 ? "[]") -}}"
+            id="{{ id }}"
+            value="{{ value }}"
+            {% if attributes|length %}
+                {{ attributes }}
+            {% endif %}
+            {% if checked %}
+                checked
+            {% endif %}
+        />
+        {{ label }}
+    </label>{%- if not loop.last -%}<br />{%- endif -%}
+{%- endfor -%}

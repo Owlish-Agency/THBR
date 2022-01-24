@@ -1,0 +1,159 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+{%- import "_includes/contentkit/macros/images" as m_image -%}
+
+{%- set block = block ?? {} -%}
+{%- set banners = banner ?? block.banner.with(['focalPoint'])[0] ?? [] -%}
+{%- set bannerSize = bannerSize ?? block.bannerSize ?? "" -%}
+{%- set imageSize = imageSize ?? {"mini": "4:3", "medium": "16:9"} -%}
+{%- set additionalParams = "byline=0&amp;title=0&amp;portrait=0&amp;color=ffffff" -%}
+{%- set additionalParamsVimeo = "background=1&mute=0&loop=0&autoplay=0" -%}
+{%- set pageTitle = pageTitle ?? entry -%}
+
+{% if bannerSize == "innerPage" %}
+    {%- set imageSize = {"mini": "4:3", "medium": "4:1"} -%}
+{% else %}
+    {%- set imageSize = {"mini": "1:1", "small": "1.5:1", "large": "256:103"} -%}
+{% endif %}
+
+{%- set content -%}
+    {% if banners|length == "1" %}
+        {% if banners[0].type == "video" %}
+            <div class="tm-video-wrapper">
+                {%- include "_includes/markup/videoEmbed" with {
+                    embed: banners[0].media[0],
+                    additionalParams: additionalParams,
+                    additionalParamsVimeo: additionalParamsVimeo,
+                    imageSize: imageSize,
+                } -%}
+            </div>
+        {% else %}
+            {{ m_image.backgroundImage({
+                backgroundImage: banners[0].image[0],
+                cropRatio: imageSize,
+                position: banners[0].image[0]["focalPoint"] ?? "50% 50%",
+                class: "lazyload",
+                sectionContained: true,
+            }) }}
+            <div class="uk-block-small uk-cover-background uk-contrast tm-banner-image tm-banner-{{ bannerSize }} background-image-{{ banners[0].image[0].id }}">
+                {{ m_image.picture({
+                    image: banners[0].image[0],
+                    cropRatio: imageSize,
+                    position: banners.image[0]["focalPoint"] ?? "50% 50%",
+                    class: "lazyload uk-invisible",
+                    sectionContained: true,
+                }) }}
+                {%- set bannerText = banners[0].bannerText ?? "" -%}
+                {%- set textLocation = banners[0].textLocation ?? "" -%}
+                {% if bannerText|length %}
+                    <div class="content-overlay">
+                        <div class="uk-clearfix tm-center-overlay">
+                            <div class="uk-width-1-1 uk-width-medium-4-10 uk-container-center uk-float-{{ textLocation }}">
+                                {% for content in bannerText %}
+                                    {% if content.type == "heading" %}
+                                        {% switch content.style %}
+                                            {% case "small" %}
+                                                <p class="tm-subtitle uk-margin-remove">{{ content.heading }}</p>
+                                            {% case "medium" %}
+                                                <h4 class="uk-margin-remove">{{ content.heading }}</h4>
+                                            {% case "large" %}
+                                                <h2 class="uk-margin-remove">{{ content.heading }}</h2>
+                                        {% endswitch %}
+                                    {% elseif content.type == "description" %}
+                                        {{ content.description }}
+                                    {% elseif content.type == "svg" %}
+                                        <img src="{{ content.svg[0].url() }}">
+                                    {% elseif content.type == "linkIt" %}
+                                        <p>
+                                            <a class="uk-button uk-button-danger" href="{{ content.linkIt.url }}" {%- if content.linkIt.target ?? "" %} target="{{ content.linkIt.target }}"{%- endif -%}>
+                                                {{ content.linkIt.text }}
+                                            </a>
+                                        </p>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    {% if craft.request.segment(1)|length %}
+                        <div class="uk-container uk-container-center">
+                            <div class="uk-grid">
+                                <div class="uk-width-1-1">
+                                    {% if pageTitle.hideTitle is defined and pageTitle.hideTitle == 0 %}
+                                        <h1 class="uk-hidden-small">{{ pageTitle.title }}</h1>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+        <div id="js-bannerCarousel" class="uk-slidenav-position uk-flex uk-flex-middle uk-flex-center" data-uk-slideshow>
+            <ul class="uk-slideshow">
+                {% for banner in banners %}
+                    <li>
+                        {% if banner.type == "video" %}
+                        <div class="tm-video-wrapper">
+                            {%- include "_includes/markup/videoEmbed" with {
+                                embed: banner.media[0],
+                                additionalParams: additionalParams,
+                                additionalParamsVimeo: additionalParamsVimeo,
+                                imageSize: imageSize,
+                            } -%}
+                        </div>
+                        {% else %}
+                            {{ m_image.picture({
+                                image: banner.image[0],
+                                cropRatio: imageSize,
+                                position: banner.image[0]["focalPoint"] ?? "50% 50%",
+                                class: "lazyload",
+                                sectionContained: true,
+                            }) }}
+                            {%- set bannerText = banner.bannerText ?? "" -%}
+                            {%- set textLocation = banner.textLocation ?? "" -%}
+                            {% if bannerText|length %}
+                                <div class="content-overlay">
+                                    <div class="uk-clearfix tm-center-overlay">
+                                        <div class="uk-width-1-1 uk-width-medium-4-10 uk-container-center uk-float-{{ textLocation }}">
+                                            {% for content in bannerText %}
+                                                {% if content.type == "heading" %}
+                                                    {% switch content.style %}
+                                                        {% case "small" %}
+                                                            <p class="tm-subtitle uk-margin-remove">{{ content.heading }}</p>
+                                                        {% case "large" %}
+                                                            <h2 class="uk-margin-remove">{{ content.heading }}</h2>
+                                                    {% endswitch %}
+                                                {% elseif content.type == "description" %}
+                                                    {{ content.description }}
+                                                {% elseif content.type == "svg" %}
+                                                    <img src="{{ content.svg[0].url() }}">
+                                                {% elseif content.type == "linkIt" %}
+                                                    <p>
+                                                        <a class="uk-button" href="{{ content.linkIt.url }}" {%- if content.linkIt.target ?? "" %} target="{{ content.linkIt.target }}"{%- endif -%}>
+                                                            {{ content.linkIt.text }}
+                                                        </a>
+                                                    </p>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+            <ul class="uk-dotnav uk-dotnav-contrast uk-position-bottom uk-flex-center">
+                {% for banner in banners %}
+                    <li data-uk-slideshow-item="{{ loop.index0 }}"><a href=""></a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+{%- endset -%}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+}) }}

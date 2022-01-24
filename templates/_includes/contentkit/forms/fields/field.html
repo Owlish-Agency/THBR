@@ -1,0 +1,102 @@
+{%- set field = field ?? {} -%}
+{%- set fieldId = fieldId ?? 'f_' ~ random() -%}
+{%- set instructions = instructions ?? field["instructions"] ?? null -%}
+{%- set wrapInput = wrapInput ?? (field.type ?? null == "hidden" ? false : true) -%}
+{%- set message = message ?? craft.contactFormRequiredFields.getRouteParams("message") -%}
+{%- set value = field["label"] is defined
+    and message.messageFields[field["label"]] is defined ?
+    message.messageFields[field["label"]] : field["value"] ?? ""
+-%}
+{%- set errors = errors ?? (field["label"] ?? null and (field.type != "checkbox" and field.type != "radio" and field.type != "file") and message|length and message.getErrors ? message.getErrors(field["label"]) : null) -%}
+
+{% macro errorList(errors) %}
+    {% if errors and errors|length > 1 %}
+        <ul class="uk-text-danger uk-text-small">
+            {% for error in errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {%- elseif errors -%}
+        <span class="uk-text-danger">{{ errors is iterable ? errors[0] : error }}</span>
+    {% endif %}
+{% endmacro %}
+
+{%- set content -%}
+    {% switch field.type %}
+        {%- case "checkbox" or "radio" %}
+            {%- include [
+                '_includes/forms/fields/checkbox',
+                '_includes/contentkit/forms/fields/checkbox',
+            ] ignore missing with {
+                field: field,
+                fieldId: fieldId,
+                errors: errors,
+                value: value,
+            } only -%}
+
+        {%- case "mailRoute" %}
+            {%- include [
+                '_includes/forms/fields/select',
+                '_includes/contentkit/forms/fields/select',
+            ] ignore missing with {
+                field: field,
+                fieldId: fieldId,
+                optionValueKey: 'email',
+                includeLabelInValue: true,
+                hashValue: true,
+                errors: errors,
+                value: value,
+            } only -%}
+
+            {#
+             # Include a hidden field with the name of the mailRoute field so the
+             # email script can determine where the submission should be sent.
+             #}
+            {%- include [
+                '_includes/forms/fields/input',
+                '_includes/contentkit/forms/fields/input',
+            ] ignore missing with {
+                field: {
+                    type: 'hidden',
+                    name: 'mailRouteKey',
+                },
+                errors: errors,
+                value: field["label"] ?? "",
+            } only -%}
+
+        {%- default -%}
+            {%- include [
+                '_includes/forms/fields/' ~ field.type,
+                '_includes/contentkit/forms/fields/' ~ field.type,
+                '_includes/forms/fields/input',
+                '_includes/contentkit/forms/fields/input',
+            ] ignore missing with {
+                field: field,
+                fieldId: fieldId,
+                errors: errors,
+                value: value,
+            } only -%}
+
+    {% endswitch %}
+{%- endset -%}
+
+{%- if wrapInput -%}
+    <div class="uk-form-row">
+        <label class="uk-form-label" for="{{ fieldId }}">
+            {{ field["label"] ?? "" }}{%- if field["required"] ?? false -%}<sup class="uk-text-danger">*</sup>{%- endif -%}
+        </label>
+        <div class="uk-form-controls">
+            {{ content }}
+        </div>
+        {%- if errors or instructions -%}
+            <div class="uk-form-help-block">
+                {{ instructions }}
+                {%- if errors -%}
+                    {% from _self import errorList %}
+                    {%- if instructions -%}<br />{%- endif -%}
+                    {{ errorList(errors) }}
+                {%- endif -%}
+            </div>
+        {%- endif -%}
+    </div>
+{%- endif -%}

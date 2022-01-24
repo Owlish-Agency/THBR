@@ -1,0 +1,43 @@
+{%- set field = field ?? {} %}
+{%- set id = fieldId ?? field["id"] ?? "" -%}
+{%- set optionValueKey = optionValueKey ?? "value" -%}
+{%- set hashValue = hashValue ?? false -%}
+{%- set includeLabelInValue = includeLabelInValue ?? false -%}
+{%- set selectedValue = selectedValue ?? "" -%}
+
+{%- set attributes = field["attributes"] ?? null -%}
+{%- set class = field["class"] ?? null -%}
+{%- set label = field["label"] ?? "" %}
+{%- set name = field["name"] ?? "message[#{label}]" -%}
+{%- set options = field["options"] ?? {} -%}
+{%- set required = field["required"] ?? false %}
+
+<select
+    class="{% if class|length %} {{ class }}{%- endif -%}"
+    name="{{ name }}"
+    id="{{ id }}"
+    {% if attributes|length %}
+        {{ attributes }}
+    {% endif %}
+    {% if required %}required{% endif %}
+>
+    <option value="" disabled>
+        Choose one...
+    </option>
+    {%- for option in options -%}
+        {%- set value = option[optionValueKey] ?? "" %}
+        {%- set label = option["label"] ?? "" -%}
+        {%- if includeLabelInValue -%}
+            {%- set value = "#{value}|#{label}" -%}
+        {%- endif -%}
+        {%- set selected = selectedValue == value ? true :
+            selectedValue|length and selectedValue != value ? false :
+            option["selected"]|default(false) -%}
+        {%- if hashValue -%}
+            {%- set value = value|hash -%}
+        {%- endif -%}
+        <option value="{{ value }}"{% if selected %} selected{% endif %}>
+            {{ label }}
+        </option>
+    {%- endfor -%}
+</select>

@@ -1,0 +1,37 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set craftform = craftform ?? block["craftform"] ?? null -%}
+{%- set freeform = freeform ?? block["freeform"] ?? null %}
+{%- set successFlashMessage = successFlashMessage ?? null %}
+
+{%- set content -%}
+    {% if craftform %}
+        {%- for form in craftform -%}
+            {%- include [
+                '_includes/forms',
+                '_includes/contentkit/forms',
+            ] ignore missing with {
+                block: block,
+                entry: entry ?? null,
+                form: form,
+            } only -%}
+        {%- endfor -%}
+    {% endif %}
+    {% if freeform %}
+        {%- include [
+            '_includes/forms/freeform',
+            '_includes/contentkit/forms/freeform',
+        ] ignore missing with {
+            block: block,
+            entry: entry ?? null,
+            form: freeform,
+            successFlashMessage: successFlashMessage
+        } only -%}
+    {% endif %}
+{%- endset -%}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+}) }}

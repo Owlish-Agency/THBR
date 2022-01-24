@@ -1,0 +1,124 @@
+{# Allow `contentBlocks` variable to be overwritten if set with the include #}
+{%- set contentBlocks = contentBlocks ?? [] -%}
+{%- set sectionContent = sectionContent ?? "" -%}
+{%- set previousSection = previousSection ?? entry ?? {} -%}
+
+{# Utility variables #}
+{%- set containSection = true -%}
+{%- set isNewSection = null -%}
+{%- set addGrid = true -%}
+{%- set previousBlockTypeHandle = null -%}
+{%- set previousContain = false -%}
+{%- set previousGrid = false -%}
+{%- set previousBlockGrayWave = false -%}
+{%- set gridStyles = "" -%}
+{%- set sectionFormat = "uk-grid" -%}
+
+{# Setting global variables #}
+{%- set flowType = flowType ?? "text, image"  -%}
+{%- set previousColumnSize = "" -%}
+
+{# Adjust section spacing #}
+{%- set sectionSpacing = sectionSpacing ?? "" -%}
+{%- set sectionClass = sectionClass ?? "" -%}
+
+{# Check if a block should not be contained #}
+{%- set doNotContain = doNotContain ?? null -%}
+
+{# Loop through the blocks #}
+{% for block in contentBlocks %}
+    {# Check whether to wrap block in section, contain or grid #}
+    {%- set entryType = entryType ?? "" -%}
+
+      {#    #}
+
+    {%- set containSection =
+    block.type.handle == "snippet" and block["snippet"] == "volunteerTimesheet" ? false :
+    block.type.handle in flowType and previousBlockTypeHandle == "grayBackground" ? false :
+    block.type.handle in doNotContain ? false : (block["doNotContain"] is defined and block["doNotContain"] == true) ? false :
+    previousSection["format"] is defined and "tm-text-wrap" in previousSection["format"].styles and block.type.handle in flowType and previousContain == false ? false :
+    previousBlockTypeHandle == "dynamicLinks" and block.type.handle in flowType ? false :
+    ((previousBlockTypeHandle in flowType) and (block.type.handle in flowType)) ? false :
+    true -%}
+
+    {%- set isNewSection =
+    block.type.handle == "snippet" and block["snippet"] == "volunteerTimesheet" ? false :
+    block.type.handle in flowType and previousBlockTypeHandle == "grayBackground" ? false :
+    block.type.handle in flowType and previousBlockTypeHandle == "backgroundSetting" ? false :
+    previousSection["format"] is defined and "tm-text-wrap" in previousSection["format"].styles and block.type.handle in flowType and previousContain == false ? false :
+    previousBlockTypeHandle == "dynamicLinks" and block.type.handle in flowType ? false :
+    ((previousBlockTypeHandle in flowType) and (block.type.handle in flowType)) ? false :
+    true -%}
+
+    {%- set addGrid = block["format"] is defined and "tm-text-wrap" in block["format"].styles ? true :
+    block.type.handle in flowType and previousBlockTypeHandle == "grayBackground" ? false :
+    previousSection["format"] is defined and "tm-text-wrap" in previousSection["format"].styles and block.type.handle in flowType and previousContain == false ? false :
+    previousBlockTypeHandle == "dynamicLinks" and block.type.handle in flowType ? false :
+    ((previousBlockTypeHandle in flowType) and (block.type.handle in flowType)) ? false :
+    true -%}
+
+    {%- set sectionClass =
+    (block.type.handle == "grayBackground" and (block["grayWave"] is defined and block["grayWave"] == true)) ? "uk-section tm-gray-wave" :
+    (block.type.handle == "dynamicLinks" and (block["grayWave"] is defined and block["grayWave"] == true)) ? "uk-section uk-section-muted tm-gray-wave tm-dynamic-links" :
+     "uk-section" -%}
+
+     {%- set sectionClass = block["backgroundColor"] is defined and block["backgroundColor"] == "gray" ? sectionClass ~ " uk-section-muted" : sectionClass -%}
+
+    {%- set sectionClass = block["overlap"] is defined and block["overlap"] == true ? sectionClass ~ " tm-section-overlap" : sectionClass -%}
+
+    {%- set gridStyles = (block["format"] is defined and "tm-text-wrap" in block["format"].styles) ? "" : block.type.handle in flowType and block["format"] is defined ? "uk-flex uk-flex-" ~ block["format"].position : "" -%}
+
+    {%- set sectionFormat = (block["format"] is defined and "tm-text-wrap" in block["format"].styles) ? "uk-clearfix" : "uk-grid" -%}
+
+    {# Loop through  contentblocks and set sectionContent for use in newsection #}
+    {%- set sectionContent -%}
+        {{- sectionContent -}}
+        {%- include [
+            '_includes/contentblocks/types/' ~ block.type,
+            '_includes/contentkit/contentblocks/types/' ~ block.type,
+        ] ignore missing with {
+            block: block,
+            entryType: entryType,
+            entry: entry ?? null,
+            section: previousSection ?? null,
+        } only -%}
+    {%- endset -%}
+
+    {# {% if block.type.handle != "grayBackground" %} #}
+        {# Pass sectioncontent to newsection template for setting up #}
+        {%- include [
+            '_includes/layout/newsection',
+            '_includes/contentkit/layout/newsection',
+        ] ignore missing with {
+            block: block,
+            sectionContent: sectionContent,
+            isNewSection: isNewSection,
+            firstLoop: previousBlockTypeHandle == "grayBackground" and loop.index == "2" ? true : loop.first ? true : false,
+            lastLoop: loop.last ? true : false,
+            previousBlockType: previousBlockTypeHandle,
+            containSection: containSection,
+            addGrid: addGrid,
+            sectionFormat:  sectionFormat,
+            previousContain: previousContain,
+            previousGrid: previousGrid,
+            sectionClass: sectionClass,
+            gridStyles: gridStyles
+        } only -%}
+    {# {% endif %} #}
+
+    {# reset variables for next loop #}
+    {%- set previousColumnSize = block["format"] is defined ? block["format"].columnSize : "" -%}
+    {%- set sectionContent = "" -%}
+    {%- set previousSection = block -%}
+    {%- set previousContain = containSection -%}
+    {%- set previousGrid = addGrid -%}
+    {%- set previousBlockTypeHandle = block.type.handle -%}
+    {%- set previousBlockGrayWave = block["grayWave"] is defined and block["grayWave"] == true ? true : false -%}
+    {%- set sectionClass = null -%}
+
+
+
+{% endfor %}
+
+
+

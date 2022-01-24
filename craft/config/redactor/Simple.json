@@ -1,0 +1,11 @@
+{
+	"buttons": ["bold","italic"],
+    "plugins": ["source","inlinestyles"],
+    "buttonsAdd": [
+        {
+            "title": "Prevent line-break",
+            "args": ["nobr"]
+        },
+    ],
+    structure: true
+}

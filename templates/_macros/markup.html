@@ -1,0 +1,432 @@
+{% macro is_active(segment) %}
+    {% if craft.request.firstSegment == segment %}uk-active{% endif %}
+{% endmacro %}
+
+{# Meta Item Macro #}
+{% macro article_metaItem(meta, title, html) %}
+    {% set html = html ?? "li" %}
+    <{{ html }}>
+        {{ title }}
+        {{ meta|title }}
+    </{{ html }}>
+{% endmacro %}
+
+{# Meta List Macro #}
+{% macro article_metaList(meta, title, html) %}
+    {% set html = html ?? "li" %}
+    <{{ html }}>
+    {% for item in meta %}
+        {% if loop.index == 1 %}
+            <strong>{{ title }}:</strong>
+        {% endif %}
+        {{ item|title }}{% if not loop.last %},{% endif %}
+    {% endfor %}
+    </{{ html }}>
+{% endmacro %}
+
+{% macro list_navigation(segment, listClass, linkClass) %}
+    {% for link in segment %}
+        {% switch link.linkIt.type %}
+            {% case "entry" %}
+                <li class="{%- if (craft.request.firstSegment() in link.linkIt.url) and (craft.request.firstSegment()|length) -%}uk-active{%- endif %} {{ listClass }}">
+                    <a class="{{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }}</a>
+                    {% set parent = craft.entries.id(link.linkIt.entry.id).first() %}
+                    {% if parent.children|length %}
+                        <div class="uk-navbar-dropdown">
+                            <ul class="uk-nav uk-navbar-dropdown-nav">
+                                {% for child in parent.children %}
+                                    <li class="{%- if (craft.request.segment(2) in child.url) -%}uk-active{%- endif %}"><a {% if child.type == 'redirect' %}target="_blank"{% endif %} href="{{ child.url }}">{{ child.title }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </li>
+            {% case "custom" %}
+                <li class="{{ listClass }}"><a class="{{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }}</a></li>
+            {% default %}
+                <li class="{{ listClass }}"><a class="{{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }}</a></li>
+        {% endswitch %}
+    {% endfor %}
+{% endmacro %}
+{% macro list_navigationFeatured(segment, listClass, linkClass) %}
+    {% for link in segment %}
+        {% switch link.linkIt.type %}
+            {% case "entry" %}
+                <li class="{{ listClass }}">
+                    <a class="{{ link.linkStyle.value }} {{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }}</a>
+                </li>
+            {% case "custom" %}
+                <li class="{{ listClass }}"><a class="{{ link.linkStyle.value }} {{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }}</a></li>
+            {% default %}
+                <li class="{{ listClass }}"><a class="{{ link.linkStyle.value }} {{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }}</a></li>
+        {% endswitch %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro list_subNavigation(segment, listClass, linkClass) %}
+    {%- for link in segment -%}
+        {%- if craft.request.segment(1) in link.linkIt.url -%}
+            {%- set subNav = link.linkIt.entry.children().level(2).doNotShowInNavigation('not 1') ?? [] -%}
+            {%- if subNav|length -%}
+                <nav class="uk-navbar tm-subnav uk-hidden-small">
+                    <ul class="uk-navbar-nav">
+                        {% for child in subNav %}
+                            <li class="{% if craft.request.lastSegment() in child %}uk-active{% endif %} {{ listClass }}"><a class="{{ linkClass }} {% if child.slug == "make-a-gift" %}uk-button uk-button-small uk-button-success tm-giving-button{% endif %}" href="{{ child.url }}">{{ child.title }}</a></li>
+                        {% endfor %}
+                        {% if craft.request.segment(1) == "academics" and catalogLink.catalogLink|length %}
+                            <li class="{{ listClass }}"><a class="{{ linkClass }} uk-button uk-button-small uk-button-success tm-giving-button" href="{{ catalogLink.catalogLink[0].url }}">{{ catalogLink.catalogLink[0].title }}</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {%- endif -%}
+        {%- endif -%}
+    {%- endfor -%}
+{% endmacro %}
+
+{% macro list_secondarySubNavigation(segment, listClass, linkClass) %}
+    {% set subnav = craft.entries.section('pages').slug(segment) %}
+    {% if subnav|length %}
+        {% set children = subnav[0].children().level(2).doNotShowInNavigation('not 1') ?? [] %}
+        {% if children|length %}
+        <nav class="uk-navbar tm-subnav uk-hidden-small">
+            <ul class="uk-navbar-nav">
+                    {% for child in children %}
+                        <li class="{% if craft.request.lastSegment() in child %}uk-active{% endif %} {{ listClass }}"><a class="{{ linkClass }} {% if child.slug == "make-a-gift" %}uk-button uk-button-small uk-button-success tm-giving-button{% endif %}" href="{{ child.url }}">{{ child.title }}</a></li>
+                    {% endfor %}
+                {% if craft.request.segment(1) == "academics" and catalogLink.catalogLink|length %}
+                    <li class="{{ listClass }}"><a class="{{ linkClass }} uk-button uk-button-small uk-button-success tm-giving-button" href="{{ catalogLink.catalogLink[0].url }}">{{ catalogLink.catalogLink[0].title }}</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{% macro list_mobileNavigation2(segment, featuredLinks, listClass, linkClass) %}
+    {# {% if featuredLinks|length %}
+        <li>
+            <ul class="tm-mobile-nav--buttons tm-flex-fit">
+                    {% for link in featuredLinks %}
+                        <li class="{{ listClass }}">
+                            <a class="{{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">
+                                {{ link.linkIt.text }}
+                            </a>
+                        </li>
+                    {% endfor %}
+            </ul>
+        </li>
+    {% endif %} #}
+        {% for link in segment %}
+            {% switch link.linkIt.type %}
+                {% case "entry" %}
+                    <li class="{{ listClass }}">
+                        {% set children = link.linkIt.entry.children().level(2).doNotShowInNavigation('not 1') %}
+                        <a class="{%- if (craft.request.firstSegment() in link.linkIt.url) and (craft.request.firstSegment()|length) -%}uk-active{%- endif %} {{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }}
+                            {% if children|length %}<span class="tm-right uk-accordion-title"></span>{% endif %}
+                        </a>
+                        {% if children|length %}
+                            <ul class="uk-accordion-content tm-mobile-subnav">
+                                {% for entry in children %}
+                                    <li>
+                                        <a class="{%- if (craft.request.path in entry.url) and (craft.request.segment(2)|length) -%}uk-active{%- endif %} {% if entry.slug == "make-a-gift" %}tm-giving-button{% endif %}" href="{{ entry.url }}">{{ entry.title }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </li>
+                {% case "custom" %}
+                    <li class="{{ listClass }}"><a class="{{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }}</a></li>
+                {% default %}
+                    <li class="{{ listClass }}"><a class="{{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }}</a></li>
+            {% endswitch %}
+        {% endfor %}
+{% endmacro %}
+
+{% macro list_mobileNavigation(segment, featuredLinks, tertiary, listClass, linkClass) %}
+        {% for link in segment %}
+            {% switch link.linkIt.type %}
+                {% case "entry" %}
+                    {% set children = link.linkIt.entry.children().level(2) %}
+                    <li class="{{ listClass }} {% if children|length %}uk-parent{% endif %} {% if (craft.request.firstSegment() in link.linkIt.url) and (craft.request.firstSegment()|length) %} uk-open{% endif %}">
+                        <a class="{%- if (craft.request.firstSegment() in link.linkIt.url) and (craft.request.firstSegment()|length) -%}uk-active{%- endif %} {{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }}
+                        </a>
+                        {% if children|length %}
+                            <ul class="uk-nav-sub">
+                                <li>
+                                    <a class="{%- if (craft.request.firstSegment() in link.linkIt.url) and (craft.request.firstSegment()|length) -%}uk-active{%- endif %} {{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }} <span uk-icon="icon: chevron-right; ratio: .7"></span></a>
+                                </li>
+                                {% for entry in children %}
+                                    <li>
+                                        <a class="{%- if (craft.request.path in entry.url) and (craft.request.segment(2)|length) -%}uk-active{%- endif %}" {% if entry.type == 'redirect' %}target="_blank"{% endif %} href="{{ entry.url }}">{{ entry.title }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </li>
+                {% case "custom" %}
+                    <li class="{{ listClass }}"><a class="{{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }}</a></li>
+                {% default %}
+                    <li class="{{ listClass }}"><a class="{{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }}</a></li>
+            {% endswitch %}
+        {% endfor %}
+        {% for link in featuredLinks %}
+            {% switch link.linkIt.type %}
+                {% case "entry" %}
+                    {% set children = link.linkIt.entry.children().level(2) %}
+                    <li class="{{ listClass }} {% if children|length %}uk-parent{% endif %}">
+                        <a class="{%- if (craft.request.firstSegment() in link.linkIt.url) and (craft.request.firstSegment()|length) -%}uk-active{%- endif %} {{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }}
+                        </a>
+                        {% if children|length %}
+                            <ul class="uk-nav-sub">
+                                <li>
+                                    <a class="{%- if (craft.request.firstSegment() in link.linkIt.url) and (craft.request.firstSegment()|length) -%}uk-active{%- endif %} {{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }} <span uk-icon="icon: chevron-right; ratio: .7"></span></a>
+                                </li>
+                                {% for entry in children %}
+                                    <li>
+                                        <a class="{%- if (craft.request.path in entry.url) and (craft.request.segment(2)|length) -%}uk-active{%- endif %}" href="{{ entry.url }}">{{ entry.title }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </li>
+                {% case "custom" %}
+                    <li class="{{ listClass }}"><a class="{{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }}</a></li>
+                {% default %}
+                    <li class="{{ listClass }}"><a class="{{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }}</a></li>
+            {% endswitch %}
+        {% endfor %}
+        {% for link in tertiary %}
+            {% switch link.linkIt.type %}
+                {% case "entry" %}
+                    {% set children = link.linkIt.entry.children().level(2) %}
+                    <li class="{{ listClass }} {% if children|length %}uk-parent{% endif %}">
+                        <a class="{%- if (craft.request.firstSegment() in link.linkIt.url) and (craft.request.firstSegment()|length) -%}uk-active{%- endif %} {{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }}
+                        </a>
+                        {% if children|length %}
+                            <ul class="uk-nav-sub">
+                                <li>
+                                    <a class="{%- if (craft.request.firstSegment() in link.linkIt.url) and (craft.request.firstSegment()|length) -%}uk-active{%- endif %} {{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }} <span uk-icon="icon: chevron-right; ratio: .7"></span></a>
+                                </li>
+                                {% for entry in children %}
+                                    <li>
+                                        <a class="{%- if (craft.request.path in entry.url) and (craft.request.segment(2)|length) -%}uk-active{%- endif %}" href="{{ entry.url }}">{{ entry.title }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </li>
+                {% case "custom" %}
+                    <li class="{{ listClass }}"><a class="{{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }}</a></li>
+                {% default %}
+                    <li class="{{ listClass }}"><a class="{{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }}</a></li>
+            {% endswitch %}
+        {% endfor %}
+        <li class="uk-nav-divider"></li>
+        <li class="uk-margin">
+            {% include "_includes/markup/search" with {
+                placeholder: "search..."
+            } %}
+        </li>
+{% endmacro %}
+
+{% macro list_sitemapNavigation(segment, listClass, linkClass) %}
+    {% cache globally using key "nav-sitemap" if craft.config.cache %}
+        {% for entry in segment %}
+            {% set children = entry.children().level(2).doNotShowInNavigation('not 1') %}
+            <li class="{%- if (craft.request.path in entry.url) and (craft.request.firstSegment()|length) -%}uk-active{%- endif %} {{ listClass }}">
+                <a class="{{ linkClass }}" href="{{ entry.url }}">{{ entry.title }}</a>
+                {% if children|length %}
+                    <ul class="uk-nav tm-footer-sitemap--list">
+                        {% for entry in children %}
+                            <li>
+                                <a class="{%- if (craft.request.path in entry.url) and (craft.request.segment(2)|length) -%}uk-active{%- endif %}" href="{{ entry.url }}">{{ entry.title }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </li>
+        {% endfor %}
+    {% endcache %}
+{% endmacro %}
+
+{% macro list_navigationFooter(segment, listClass, linkClass) %}
+    <nav class="uk-navbar-container uk-navbar-transparent tm-icon-list uk-text-meta" uk-navbar>
+        <div class="uk-navbar-right">
+            <ul class="uk-navbar-nav">
+                {% for link in segment %}
+                    <li class="{{ listClass }}"><a class="{{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </nav>
+{% endmacro %}
+
+{% macro footer_widget(column) %}
+    {% for widget in column %}
+        {% switch widget.type %}
+            {% case "logo" %}
+                <div class="uk-grid uk-grid-small" uk-grid>
+                    <div class="uk-width-1-1">
+                        {% if "palliative-care-of-baton-rouge" in craft.request.getSegments() %}
+                            <a href="/"><img class="tm-footer-logo" src="/img/pcbr_logo-white.svg" title="Palliative Care Logo" alt="Palliative Care"></a>
+                        {% else %}
+                            <a href="/"><img class="tm-footer-logo" src="{{ widget.logo[0].url }}" title="{{ widget.logo[0].title }}" alt="{% if widget.logo[0].altDescription is defined and widget.logo[0].altDescription|length %}{{ widget.logo[0].altDescription|striptags }}{% endif %}"></a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% case "description" %}
+                <div class="uk-grid uk-grid-small" uk-grid>
+                    <div class="uk-width-1-1">
+                        <p>{{ widget.description|striptags }}</p>
+                    </div>
+                </div>
+            {% case "iconList" %}
+                <div class="uk-grid uk-grid-small" uk-grid>
+                    <div class="uk-width-1-1">
+                        <nav class="uk-navbar-container uk-navbar-transparent tm-icon-list" uk-navbar>
+                            <div class="uk-navbar-left">
+                                <ul class="uk-navbar-nav">
+                                    {% for icon in widget.icons %}
+                                        <li>
+                                            {% if icon.assetLink|length %}
+                                                <a href="{{ icon.assetLink.url }}"
+                                                {%- if icon.assetLink.target ?? "" %} target="{{ icon.assetLink.target }}">{% endif %}
+                                            {% endif %}
+                                            <img src="{{ icon.url }}" title="{{ icon.title }}" alt="{% if icon.altDescription is defined and icon.altDescription|length %}{{ icon.altDescription|striptags }}{% endif %}">
+                                            {% if icon.assetLink|length %}</a>{% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+            {% case "footerNavigation" %}
+                <li><a target="{{ widget.linkIt.target }}" href="{{ widget.linkIt.url }}">{{ widget.linkIt.text }}</a></li>
+            {% case "search" %}
+                <div class="uk-grid uk-grid-small" uk-grid>
+                    <div class="uk-width-1-1">
+                        <h6>Search</h6>
+                        {% include "_includes/markup/search" with {
+                            placeholder: widget.searchPlaceholder
+                        } %}
+                    </div>
+                </div>
+            {% case "contactInformation" %}
+                <div class="uk-grid uk-grid-small tm-footer-contact" uk-grid>
+                    <div class="uk-width-1-1">
+                        <div class="uk-grid uk-grid-small tm-footer-address" uk-grid>
+                            <div class="uk-width-1-2@m">
+                                <h6 class="uk-margin-remove">Address</h6>
+                                {{ widget.address }}
+                            </div>
+                            <div class="uk-width-1-2@m">
+                                <h6 class="uk-margin-remove">Contact</h6>
+                                {{ widget.contact }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% case "button" %}
+                <div class="uk-grid uk-grid-small" uk-grid>
+                    <div class="uk-width-1-1">
+                        <a class="uk-button uk-button-primary uk-button-large" target="{{ widget.linkIt.target }}" href="{{ widget.linkIt.url }}">{{ widget.linkIt.text }}</a>
+                    </div>
+                </div>
+        {% endswitch %}
+    {% endfor %}
+{% endmacro %}
+
+{# Primary Navigation Macro #}
+{% macro list_mobileNavigationNew(segment, listClass, linkClass, ulClass) %}
+    {% import _self as navigation %}
+
+    {% set class = "tm-m-primary-links" in ulClass ? ulClass ~ " uk-nav-default uk-nav-parent-icon" : ulClass ~ " uk-nav uk-navbar-nav" %}
+
+    <ul class="{{ class }} uk-flex-middle" uk-nav>
+        {% for link in segment.all() %}
+            {%- set parent = null -%}
+            {%- set parentSlug = null -%}
+            {%- set childSlug = null -%}
+            {%- set children = null -%}
+            {%- set parentClass = null -%}
+            {% set childPageActive = false %}
+
+            {% set entryId = link.linkIt.value %}
+            {% set entries = craft.entries({
+                id: entryId
+            }) %}
+
+            {% for entry in entries.all() %}
+                {% if entry.hasDescendants() %}
+                    {% set parent = entry %}
+                    {% set children = entry.getChildren() %}
+                {% endif %}
+                {% set parentSlug = entry.slug %}
+            {% endfor %}
+
+            {%- if children|length and "tm-m-primary-links" in ulClass and parent.id != 37 and parent.id != 61 -%}
+                {%- set parentClass = "uk-parent" -%}
+            {%- endif -%}
+
+            {% if loop.index == 5 and "tm-m-primary-links" not in ulClass  %}
+                <li>
+                {# <a class="more" href="#"></a> #}
+                <div class="tm-secondary-nav uk-margin-remove-top">
+                <div class="uk-container">
+                <ul class="uk-subnav uk-navbar-dropdown-nav uk-flex-right">
+            {% endif %}
+
+            {# {% if lastSegment == parentSlug or craft.app.request.getSegment(2)|length %} #}
+                {# {% set childPageActive = true %} #}
+            {# {% endif %} #}
+
+            {% set loopIndex = loop.index %}
+            {% switch link.linkIt.type %}
+                {% case "entry" %}
+                    <li class="{%- if (craft.app.request.segments|first in link.linkIt.url) and (craft.app.request.segments|first|length) -%}uk-active{%- endif %} {{ listClass }}{{ parentClass }}">
+                        <a class="{{ linkClass }}" href="{{ link.linkIt.url }}">
+                            {{ link.linkIt.text }} {% if children|length and parent.id != 37 and parent.id != 61 %}<span class="tm-parent-chevron" uk-icon="icon: chevron-down; ratio: .7"></span>{% endif %}
+                        </a>
+                        {% if children|length and parent.id != 37 and parent.id != 61 %}
+                            {% set childClass = "tm-m-primary-links" in ulClass ? "uk-nav-sub" : "uk-nav uk-dropdown-nav" %}
+                            {% if "tm-primary-links" in ulClass %}
+                                <div class="tm-primary-links-children uk-box-shadow-medium {{ loop.index == 4 ? 'tm-position-arrow-right' }}" uk-dropdown="pos: bottom-justify; animation: uk-animation-slide-top-small;">
+                            {% endif %}
+                            <ul class="{{ childClass }}">
+                                <li>
+                                    <a class="tm-m-sub-links-parent tm-color-default" href="{{ parent.url }}">
+                                        {{ parent }} <span uk-icon="icon: chevron-right; ratio: .7"></span>
+                                    </a>
+                                </li>
+                                {% for child in children.all() %}
+                                    <li><a {% if child.type == 'redirect' %}target="_blank"{% endif %} class="tm-m-sub-links-children" href="{{ child.url }}">{{ child.title }}</a></li>
+                                {% endfor %}
+                            </ul>
+                            {% if "tm-primary-links" in ulClass %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </li>
+                {% case "custom" %}
+                        <li class="{{ listClass }}"><a class="{{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }}</a></li>
+                {% default %}
+                    <li class="{{ listClass }}"><a class="{{ linkClass }}" target="{{ link.linkIt.target }}" href="{{ link.linkIt.url }}">{{ link.linkIt.text }}</a></li>
+            {% endswitch %}
+
+            {% if "tm-m-primary-links" in ulClass and loop.last %}
+                <li class="uk-nav-divider"></li>
+                <li class="uk-margin">
+                    <form class="uk-search uk-search-default uk-width-1-1">
+                        <span uk-search-icon></span>
+                        <input class="uk-search-input uk-border-rounded" type="search" placeholder="Search the site...">
+                    </form>
+                </li>
+            {% endif %}
+
+            {% if loop.last and "tm-m-primary-links" not in ulClass %}
+                </li></div></div></ul>
+            {% endif %}
+        {% endfor %}
+    </ul>
+{% endmacro %}

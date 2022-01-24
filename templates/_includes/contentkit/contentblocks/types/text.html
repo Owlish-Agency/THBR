@@ -1,0 +1,15 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set text = text ?? block["text"] ?? "" -%}
+{%- set section = section ?? null -%}
+
+{%- set content -%}
+    {{ text }}
+{%- endset -%}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+    section: section,
+}) }}

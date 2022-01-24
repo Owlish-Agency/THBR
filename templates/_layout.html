@@ -1,0 +1,153 @@
+{% set staticAssetsVersion = craft.config.environmentVariables.staticAssetsVersion %}
+{% set freeformMessage = craft.session.getFlash('successMessage') %}
+{% set craftformMessage = craft.session.getFlash('notice') %}
+{% set message = errorMessage is defined ? errorMessage : null %}
+{# Change Craft flash messages #}
+{% if craftformMessage == 'User registered.' %}
+    {% set craftformMessage = "Thank you for creating an account with The Hospice of Baton Rouge. The Volunteer Coordinator will notify you once your account has been approved. If you have any questions, please call 225-767-4673." %}
+{% endif %}
+{% if craftformMessage == 'Logged in.' %}
+    {% set craftformMessage = "You are now logged in!" %}
+{% endif %}
+{% if craftformMessage == 'Entry saved.' %}
+    {% set craftformMessage = "Thank you for submitting volunteer hours with The Hospice of Baton Rouge! The Volunteer Coordinator will notify you if they have any questions about your hours. If you have any questions, please call 225-767-4673." %}
+{% endif %}
+{% if craftformMessage == 'Password reset email sent.' %}
+    {% set craftformMessage = "Your password reset request has been received. You will receive an email shortly with instructions." %}
+{% endif %}
+{% import "_macros/markup" as macros %}
+{% minify html %}
+<!DOCTYPE html>
+    <!--[if lt IE 7]><html class="lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+    <!--[if IE 7]><html class="lt-ie9 lt-ie8"> <![endif]-->
+    <!--[if IE 8]><html class="lt-ie9"> <![endif]-->
+    <!--[if gt IE 8]><!--><html class="{% if "palliative-care-of-baton-rouge" in craft.request.getSegments()  %}palliative-care-of-baton-rouge{% endif %}"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        {# Title and meta rendered using SEOmatic #}
+        {% hook 'seomaticRender' %}
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" sizes="57x57" href="/favicon/apple-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="/favicon/apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="/favicon/apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="/favicon/apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="/favicon/apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="/favicon/apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="/favicon/apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="/favicon/apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="192x192"  href="/favicon/android-icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+        <link rel="manifest" href="/favicon/manifest.json">
+        <meta name="msapplication-TileColor" content="#55D6BE">
+        <meta name="msapplication-TileImage" content="/favicon/ms-icon-144x144.png">
+        <meta name="theme-color" content="#55D6BE">
+
+       {# <style>.hidden { display: none; }</style>#}
+        {# lazyszes bgset extension JS #}
+
+        {# Eleminating flash of unstyled content #}
+        {#<script type="text/javascript">
+            var htmlElement = document.getElementsByTagName("html")[0];
+            htmlElement.classList.add("hidden");
+            window.onload = function(e){
+                 htmlElement.classList.remove("hidden");
+            }
+        </script>#}
+
+        <script>
+            function loadJS(u){var r=document.getElementsByTagName("script")[0],s=document.createElement("script");s.src=u;r.parentNode.insertBefore(s,r);}
+
+            if(!window.HTMLPictureElement || !('sizes' in document.createElement('img'))){
+                loadJS("ls.respimg.min.js");
+            }
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-103454381-1"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'UA-103454381-1');
+        </script>
+
+
+        {% minify html %}
+            <link rel="stylesheet" type="text/css" href="https://cloud.typography.com/6093672/6961992/css/fonts.css" />
+            {% if "palliative-care-of-baton-rouge" in craft.request.getSegments() %}
+                <link rel="stylesheet" href="/pc/pc.combined.min.css?v={{staticAssetsVersion}}" >
+            {% else %}
+                <link rel="stylesheet" href="/css/site.combined.min.css?v={{staticAssetsVersion}}" >
+            {% endif %}
+            <link rel="stylesheet" type="text/css" href="/css/print.css?v={{staticAssetsVersion}}" media="print">
+
+            <link rel="stylesheet" href="/music/player.css">
+
+            <script src="/js/main.min.js?v={{staticAssetsVersion}}" defer></script>
+
+            <script src="/js/uikit.min.js"></script>
+            <script src="/js/uikit-icons.min.js"></script>
+        {% endminify %}
+        <noscript>
+            <style>
+                .se-pre-con {
+                    display: none;
+                }
+            </style>
+        </noscript>
+    </head>
+    <body class="{% if "palliative-care-of-baton-rouge" in craft.request.getSegments() %}palliative-care-of-baton-rouge{% endif %} {{ entry.slug }}">
+        <div class="se-pre-con"></div>
+        <!--[if lte IE 9]>
+            <div class="uk-alert-warning">
+                <p class="uk-text-center">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.
+                </p>
+            </div>
+        <![endif]-->
+        {% include "_includes/header" %}
+        <div class="tm-main">
+            {% block content %}
+
+            {% endblock %}
+        </div>
+        {% include "_includes/footer" %}
+
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/jquery.inputmask.bundle.min.js"></script>
+
+        <script src="/js/moment.min.js"></script>
+        <script src="/js/modernizr.min.js"></script>
+        <script src="/js/player.min.js"></script>
+        <script src="/js/picker.min.js"></script>
+        <script src="/js/picker.date.min.js"></script>
+        <script src="/js/picker.time.min.js"></script>
+        <script src="/js/require.min.js"></script>
+
+        <script>
+            var csrfTokenName  = "{{ craft.config.get('csrfTokenName') }}";
+            var csrfTokenValue = "{{ craft.request.getCsrfToken }}";
+        </script>
+        {% minify js %}
+        {%- if message|length -%}
+            <script type="text/javascript">
+                UIkit.notification('{{ message }}', {status:'danger', timeout: 8000});
+            </script>
+        {%- endif -%}
+        {%- if craftformMessage|length -%}
+            <script type="text/javascript">
+                UIkit.notification('{{ craftformMessage }}', {status:'success', timeout: 8000});
+            </script>
+        {%- endif -%}
+        {%- if freeformMessage|length -%}
+            <script type="text/javascript">
+                UIkit.notification('{{ freeformMessage }}', {status:'success', timeout: 8000});
+            </script>
+        {%- endif -%}
+        {% endminify %}
+    </body>
+</html>
+{% endminify %}

@@ -1,0 +1,41 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+{%- import "_includes/contentkit/macros/images" as m_images -%}
+
+{%- set block = block ?? {} -%}
+{%- set image = image ?? block["image"] ?? [] -%}
+{%- set imageStyles = imageStyles ?? block["imageStyles"] ?? [] -%}
+{%- set caption = caption ?? block["caption"] ?? "" -%}
+
+{%- set class =  [
+    imageStyles is iterable ? imageStyles|join(" ") : imageStyles,
+    class ?? "",
+]|filter|join(" ") -%}
+
+{%- set content -%}
+    {%- for image in image -%}
+        {% if image.extension == "svg" %}
+             <img src="{{ image.url ?? "" }}"{% if class %} class="{{ class }}"{% endif %}{% if image.title ?? "" %} alt="{{ image.title }}"{% endif %} />
+        {% else %}
+            {% set imageCaption = image["caption"] ?? caption %}
+            {{ m_images.picture({
+                block: block,
+                image: image,
+                class: class,
+                sectionContained: section["containSection"] ?? false,
+            }) }}
+        {% endif %}
+        {% if caption %}
+            <div class="uk-thumbnail-caption">
+                {{ imageCaption }}
+            </div>
+        {% endif %}
+    {%- else -%}
+        <img src="holder.js/400x250?size=0&auto=yes" style="width:100%;" alt="{{ image["title"]|default("") }}">
+    {%- endfor -%}
+{%- endset -%}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+    section: section,
+}) }}

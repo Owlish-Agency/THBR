@@ -1,0 +1,21 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set testimonialType = testimonialType ?? block["testimonialType"] ?? null -%}
+
+{% set testimonial = craft.entries.section("testimonial").relatedTo(testimonialType).order('RAND()').first() %}
+
+{% if testimonial|length %}
+    {%- set content -%}
+        <div class="uk-card uk-card-primary uk-card-body uk-width-1-1">
+            <p class="uk-margin-remove">"{{ testimonial.testimonial|striptags }}"</p>
+            <h5 class="uk-margin-remove uk-text-right tm-text-light-blue">– {{ testimonial.attestant }}</h5>
+        </div>
+    {% endset %}
+
+    {{ m_grid.column({
+        block: block,
+        content: content,
+    }) }}
+{% endif %}
+

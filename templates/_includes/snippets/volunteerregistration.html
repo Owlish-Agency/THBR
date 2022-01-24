@@ -1,0 +1,211 @@
+        <div class="uk-container">
+            <div class="uk-grid" uk-grid>
+                <div class="uk-width-1-1">
+
+                    <form class="uk-form-stacked" method="post" accept-charset="UTF-8">
+                        {{ getCsrfInput() }}
+                        <input type="hidden" name="action" value="users/saveUser">
+                        <input type="hidden" name="redirect" value="{{ craft.request.getUrl() }}">
+
+                        {% macro errorList(errors) %}
+                            {% if errors %}
+                                <ul class="uk-alert-danger uk-list uk-padding-small">
+                                    {% for error in errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        {% endmacro %}
+
+                        {% from _self import errorList %}
+
+                        <div class="uk-grid uk-grid-small" uk-grid>
+                            <div class="uk-width-1-2@m">
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="firstName" type="text" name="firstName"
+                                        {%- if account is defined %} value="{{ account.firstName }}"{% endif -%} placeholder="First Name*" required>
+
+                                    {% if account is defined %}
+                                        {{ errorList(account.getErrors('firstName')) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="uk-width-1-2@m">
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="lastName" type="text" name="lastName"
+                                        {%- if account is defined %} value="{{ account.lastName }}"{% endif -%} placeholder="Last Name*" required>
+
+                                    {% if account is defined %}
+                                        {{ errorList(account.getErrors('lastName')) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="uk-width-1-1">
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="email" type="text" name="email"
+                                        {%- if account is defined %} value="{{ account.email }}"{% endif %} placeholder="Email Address*" required>
+
+                                    {% if account is defined %}
+                                        {{ errorList(account.getErrors('email')) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="uk-width-1-1">
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="password" type="text" name="password"
+                                        {%- if account is defined %} value="{{ account.password }}"{% endif %} placeholder="New Password*" required>
+                                        <small>6 characters or more — keep it secret, keep it safe.</small>
+                                    {% if account is defined %}
+                                        {{ errorList(account.getErrors('password')) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="uk-width-1-2@m">
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="homePhoneNumber" type="text" name="fields[homePhoneNumber]"
+                                        {%- if account is defined %} value="{{ account.homePhoneNumber }}"{% endif %} placeholder="Home Phone Number">
+
+                                    {% if account is defined %}
+                                        {{ errorList(account.getErrors('cellPhoneNumber')) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="uk-width-1-2@m">
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="cellPhoneNumber" type="text" name="fields[cellPhoneNumber]"
+                                        {%- if account is defined %} value="{{ account.cellPhoneNumber }}"{% endif %} placeholder="Cell Phone Number">
+
+                                    {% if account is defined %}
+                                        {{ errorList(account.getErrors('cellPhoneNumber')) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="uk-width-1-1">
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="mailingAddress" type="text" name="fields[mailingAddress]"
+                                        {%- if account is defined %} value="{{ account.mailingAddress }}"{% endif %} placeholder="Street Address">
+
+                                    {% if account is defined %}
+                                        {{ errorList(account.getErrors('mailingAddress')) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="uk-width-1-1">
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="mailingAddress2" type="text" name="fields[mailingAddress2]"
+                                        {%- if account is defined %} value="{{ account.mailingAddress2 }}"{% endif %} placeholder="Street Address 2">
+
+                                    {% if account is defined %}
+                                        {{ errorList(account.getErrors('mailingAddress2')) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="uk-width-1-3@m">
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="city" type="text" name="fields[city]"
+                                        {%- if account is defined %} value="{{ account.city }}"{% endif %} placeholder="City">
+
+                                    {% if account is defined %}
+                                        {{ errorList(account.getErrors('city')) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="uk-width-1-3@m">
+                                <div class="uk-form-controls">
+                                    {% set states = craft.fields.getFieldByHandle('state') %}
+                                    <select class="uk-select" id="state" name="fields[state]" {%- if account is defined %} value="{{ account.state }}"{% endif %} placeholder="State">
+                                        <option value="" disabled selected>Select a State</option>
+                                         {% for state in states.settings.options %}
+                                              <option value="{{ state.value }}">{{ state.label }}</option>
+                                         {% endfor %}
+                                    </select>
+
+                                    {% if account is defined %}
+                                        {{ errorList(account.getErrors('state')) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="uk-width-1-3@m">
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="zipCode" type="text" name="fields[zipCode]"
+                                        {%- if account is defined %} value="{{ account.zipCode }}"{% endif %} placeholder="Zip Code">
+
+                                    {% if account is defined %}
+                                        {{ errorList(account.getErrors('zipCode')) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="uk-width-1-1">
+                                <label><strong>Check all areas of interest</strong></label>
+                            </div>
+                            <div class="uk-width-1-2@m">
+                                <div class="uk-form-controls">
+                                    <ul class="uk-list">
+                                        <li>
+                                            <input type="checkbox" value="roleAdministrativeClerical" name="fields[areasOfInterest][]" >&nbsp;Role - Administrative & Clerical
+                                        </li>
+                                        <li>
+                                            <input type="checkbox" value="roleDirectPatientCare" name="fields[areasOfInterest][]" >&nbsp;Role - Direct Patient Care
+                                        </li>
+                                        <li>
+                                            <input type="checkbox" value="roleSpecialEventsFundraisers" name="fields[areasOfInterest][]" >&nbsp;Role - Special Events/Fundraisers
+                                        </li>
+                                        <li>
+                                            <input type="checkbox" value="roleBereavementSupport" name="fields[areasOfInterest][]" >&nbsp;Role - Bereavement Support
+                                        </li>
+                                        <li>
+                                            <input type="checkbox" value="programCampConquer" name="fields[areasOfInterest][]" >&nbsp;Program - Camp Conquer
+                                        </li>
+                                        <li>
+                                            <input type="checkbox" value="programClubConquer" name="fields[areasOfInterest][]" >&nbsp;Program - Club Conquer
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="uk-width-1-2@m">
+                                <div class="uk-form-controls">
+                                    <ul class="uk-list">
+                                        <li>
+                                            <input type="checkbox" value="programPetPeaceOfMind" name="fields[areasOfInterest][]" >&nbsp;Program - Pet Peace of Mind
+                                        </li>
+                                        <li>
+                                            <input type="checkbox" value="programWeHonorVeterans" name="fields[areasOfInterest][]" >&nbsp;Program - We Honor Veterans
+                                        </li>
+                                        <li>
+                                            <input type="checkbox" value="programArtsCrafts" name="fields[areasOfInterest][]" >&nbsp;Program - Arts & Crafts
+                                        </li>
+                                        <li>
+                                            <input type="checkbox" value="programTrashTreasure" name="fields[areasOfInterest][]" >&nbsp;Program - Trash & Treasure
+                                        </li>
+                                        <li>
+                                            <input type="checkbox" value="programMusicMinistry" name="fields[areasOfInterest][]" >&nbsp;Program - Music Ministry
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </div>
+
+
+                            <div class="uk-width-1-1@m">
+                                <div class="uk-form-controls">
+                                    <textarea class="uk-textarea" id="comments" type="text" name="fields[comments]"
+                                        {%- if account is defined %} value="{{ account.comments }}"{% endif %} placeholder="Comments"></textarea>
+
+                                    {% if account is defined %}
+                                        {{ errorList(account.getErrors('comments')) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="uk-width-1-1">
+                                <div class="uk-form-controls">
+                                    <button class="uk-button uk-button-primary" type="submit">
+                                        Register
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>

@@ -1,0 +1,331 @@
+{% macro picture(options = {}) %}
+    {%- set block = options.block ?? {} -%}
+    {%- set breakpoints = options.breakpoints ?? {
+        mini: {
+            minWidth: 0,
+            maxWidth: 479,
+        },
+        small: {
+            minWidth: 480,
+            maxWidth: 639,
+        },
+        medium: {
+            minWidth: 640,
+            maxWidth: 959,
+        },
+        large: {
+            minWidth: 960,
+            maxWidth: 1199,
+        },
+        xlarge: {
+            minWidth: 1200,
+            maxWidth: 1600,
+        },
+    } -%}
+    {%- set format = options.format ?? block.format ?? [] -%}
+    {%- set image = options.image ?? block.image ?? {} -%}
+    {%- set imageStyles = options.imageStyles ?? block.imageStyles ?? [] -%}
+    {%- set class = options.class ?? [] -%}
+    {%- set class =  [
+        imageStyles is iterable ? imageStyles|join(" ") : imageStyles,
+        class is iterable ? class|join(" ") : class,
+    ]|filter|join(" ") -%}
+    {%- set sectionContained = options.sectionContained ?? false -%}
+    {%- set gridSectionContainedWidth = gridSectionContainedWidth ?? craft.config.contentKit.gridSectionContainedWidth ?? 1280 -%}
+    {%- set srcset = options.srcset ?? "" -%}
+    {%- set src = options.src ?? "" -%}
+    {%- set cropRatio = options.cropRatio ?? null -%}
+    {#
+     #
+     #}
+    {%- set _sources = {} -%}
+    {%- set _format = {} -%}
+    {%- set defaultSrc = "" -%}
+    {%- set defaultSrcset = "" -%}
+
+    {#
+     # Set up an object using the breakpoint screen sizes as keys
+     #}
+    {%- for format in format -%}
+        {%- set _screenSize = format.screenSize.value is defined ? format.screenSize.value : format.screenSize %}
+        {%- set _columnSize = format.columnSize.value is defined ? format.columnSize.value : format.columnSize %}
+        {%- set _format = _format|merge({
+            (_screenSize): {
+                columnSize: "-" in _columnSize ? _columnSize : "1-1",
+            }
+        }) %}
+    {%- endfor -%}
+    {%- for screenSize, breakpoint in breakpoints -%}
+        {%- set _source = {
+                image: image[screenSize] is defined and image[screenSize]|length ? image[screenSize][0] : (_previousSource.image ?? image),
+                columnSize: _format[screenSize].columnSize ?? _previousSource.columnSize ?? "1-1",
+                cropRatio: cropRatio is iterable ? (cropRatio[screenSize] ?? _previousSource.cropRatio ?? null) : cropRatio,
+        } %}
+        {%- set _sources = _sources|merge({(screenSize):_source}) -%}
+        {# previousBreakPoint is used to determine the largest breakpoint that
+         # has been added to the cropSizes hash. In the event that the current
+         # breakpoint doesn't have a column size specified, its crop size will be # determined by the previous breakpoint. #}
+        {%- set _previousSource = _source -%}
+    {%- endfor -%}
+
+    {%- if image|length -%}
+        <picture>
+            {# Output a standard and retina source for each breakpoint #}
+            {%- for screenSize, source in _sources|reverse -%}
+                {#
+                 # Column size is stored as a fraction in the format `1-1`.
+                 # Split it at the hyphen to get a fraction to determine
+                 # the proportion of the screen the image should be cropped
+                 # to.
+                 #}
+                {%- set sizeArray = source.columnSize|split("-") -%}
+                {%- set proportionOfScreen = sizeArray[0] / sizeArray[1] -%}
+                {# Set parameters for images at each breakpoint
+                ## The width is calculated by multiplying the
+                ## pixel size of the breakpoint by the size of the wrapper
+                ## element.
+                ##
+                ## An image in a `size1of2` wrapper element at a _medium_
+                ## breakpoint where the `max-width` is 1279px:
+                ## 1279 * 1/2 = 639.5
+                #}
+
+                {%- if gridSectionContainedWidth < breakpoints[screenSize].maxWidth and sectionContained -%}
+                    {%- set cropWidth = gridSectionContainedWidth * proportionOfScreen -%}
+                {%- else -%}
+                    {%- set cropWidth = breakpoints[screenSize].maxWidth * proportionOfScreen -%}
+                {%- endif -%}
+
+                {% if source.cropRatio %}
+                    {%- set cropRatioArray = source.cropRatio|split(":") -%}
+                    {%- set cropRatioFormula = cropRatioArray[1] / cropRatioArray[0] -%}
+                {% endif %}
+
+                {%- set params = {
+                    "1x": {
+                        mode: 'crop',
+                        width: cropWidth|round,
+                        height: (cropRatioFormula is defined ? (cropWidth * cropRatioFormula)|round : null),
+                        quality: 80,
+                        position: source.image["focalPoint"] ?? "50% 50%",
+                    },
+                    "2x": {
+                        mode: 'crop',
+                        width: (cropWidth * 2)|round,
+                        height: (cropRatioFormula is defined ? ((cropWidth * cropRatioFormula)|round) * 2 : null),
+                        quality: 50,
+                        position: source.image["focalPoint"] ?? "50% 50%",
+                    }
+                } -%}
+
+                {%- set srcset = (craft.imager.transformImage(source.image, params["1x"])
+                    ~ "?#{source.image.dateUpdated.getTimestamp()}, "
+                    ~ craft.imager.transformImage(source.image, params["2x"] )
+                    ~ "?#{source.image.dateUpdated.getTimestamp()} 2x")|trim
+                -%}
+
+                {%- if breakpoints[screenSize].minWidth == 0 %}
+                    {%- set defaultSrc = craft.imager.transformImage(source.image, params["1x"])
+                        ~ "?#{source.image.dateUpdated.getTimestamp()}" %}
+                    {%- set defaultSrcset = srcset %}
+                {%- else -%}
+                    <source
+                        srcset="{{ srcset }}"
+                        {% if breakpoints[screenSize].minWidth > 0 %}
+                            media="(min-width: {{ breakpoints[screenSize].minWidth }}px)"
+                        {% endif %}
+                    >
+                {%- endif -%}
+
+            {% endfor %}
+            <img
+                {% if class %}
+                    class="{{ class }}"
+                {% endif %}
+                src="{{ defaultSrc ?? "" }}"
+                {% if srcset|length %}
+                    srcset="{{ defaultSrcset ?? "" }}"
+                {% endif %}
+                title="{{ image.title }}" alt="{% if image.altDescription is defined and image.altDescription|length %}{{ image.altDescription|striptags }}{% endif %}" />
+        </picture>
+    {% endif %}
+
+{% endmacro %}
+
+
+{% macro backgroundImage(options = {}) %}
+    {%- set block = options.block ?? {} -%}
+    {%- set breakpoints = options.breakpoints ?? {
+        mini: {
+            minWidth: 0,
+            maxWidth: 479,
+        },
+        small: {
+            minWidth: 480,
+            maxWidth: 767,
+        },
+        medium: {
+            minWidth: 768,
+            maxWidth: 959,
+        },
+        large: {
+            minWidth: 960,
+            maxWidth: 1199,
+        },
+        xlarge: {
+            minWidth: 1200,
+            maxWidth: 1600,
+        },
+    } -%}
+    {%- set format = options.format ?? block.format ?? [] -%}
+    {%- set backgroundImage = options.backgroundImage ?? block.backgroundImage ?? {} -%}
+    {%- set imageStyles = options.imageStyles ?? block.imageStyles ?? [] -%}
+    {%- set class = options.class ?? [] -%}
+    {%- set class =  [
+        imageStyles is iterable ? imageStyles|join(" ") : imageStyles,
+        class is iterable ? class|join(" ") : class,
+    ]|filter|join(" ") -%}
+    {%- set sectionContained = options.sectionContained ?? false -%}
+    {%- set gridSectionContainedWidth = gridSectionContainedWidth ?? craft.config.contentKit.gridSectionContainedWidth ?? 1280 -%}
+    {%- set srcset = options.srcset ?? "" -%}
+    {%- set src = options.src ?? "" -%}
+    {%- set cropRatio = options.cropRatio ?? null -%}
+    {#
+     #
+     #}
+    {%- set _sources = {} -%}
+    {%- set _format = {} -%}
+    {%- set defaultSrc = "" -%}
+    {%- set defaultSrcset = "" -%}
+
+    {#
+     # Set up an object using the breakpoint screen sizes as keys
+     #}
+    {%- for format in format -%}
+        {%- set _screenSize = format.screenSize.value is defined ? format.screenSize.value : format.screenSize %}
+        {%- set _columnSize = format.columnSize.value is defined ? format.columnSize.value : format.columnSize %}
+        {%- set _format = _format|merge({
+            (_screenSize): {
+                columnSize: "-" in _columnSize ? _columnSize : "1-1",
+            }
+        }) %}
+    {%- endfor -%}
+    {%- for screenSize, breakpoint in breakpoints -%}
+        {%- set _source = {
+                backgroundImage: backgroundImage[screenSize] is defined and backgroundImage[screenSize]|length ? backgroundImage[screenSize][0] : (_previousSource.backgroundImage ?? backgroundImage),
+                columnSize: _format[screenSize].columnSize ?? _previousSource.columnSize ?? "1-1",
+                cropRatio: cropRatio is iterable ? (cropRatio[screenSize] ?? _previousSource.cropRatio ?? null) : cropRatio,
+        } %}
+        {%- set _sources = _sources|merge({(screenSize):_source}) -%}
+        {# previousBreakPoint is used to determine the largest breakpoint that
+         # has been added to the cropSizes hash. In the event that the current
+         # breakpoint doesn't have a column size specified, its crop size will be # determined by the previous breakpoint. #}
+        {%- set _previousSource = _source -%}
+    {%- endfor -%}
+
+    {%- if backgroundImage|length -%}
+        <style>
+            {# Output a standard and retina source for each breakpoint #}
+            {%- for screenSize, source in _sources|reverse -%}
+                {#
+                 # Column size is stored as a fraction in the format `1-1`.
+                 # Split it at the hyphen to get a fraction to determine
+                 # the proportion of the screen the image should be cropped
+                 # to.
+                 #}
+                {%- set sizeArray = source.columnSize|split("-") -%}
+                {%- set proportionOfScreen = sizeArray[0] / sizeArray[1] -%}
+                {# Set parameters for images at each breakpoint
+                ## The width is calculated by multiplying the
+                ## pixel size of the breakpoint by the size of the wrapper
+                ## element.
+                ##
+                ## An image in a `size1of2` wrapper element at a _medium_
+                ## breakpoint where the `max-width` is 1279px:
+                ## 1279 * 1/2 = 639.5
+                #}
+
+                {%- if gridSectionContainedWidth < breakpoints[screenSize].maxWidth and sectionContained -%}
+                    {%- set cropWidth = gridSectionContainedWidth * proportionOfScreen -%}
+                {%- else -%}
+                    {%- set cropWidth = breakpoints[screenSize].maxWidth * proportionOfScreen -%}
+                {%- endif -%}
+
+                {% if source.cropRatio %}
+                    {%- set cropRatioArray = source.cropRatio|split(":") -%}
+                    {%- set cropRatioFormula = cropRatioArray[1] / cropRatioArray[0] -%}
+                {% endif %}
+
+                {%- set params = {
+                    "1x": {
+                        mode: 'crop',
+                        width: cropWidth|round,
+                        height: (cropRatioFormula is defined ? (cropWidth * cropRatioFormula)|round : null),
+                        quality: 80,
+                        position: source.backgroundImage["focalPoint"] ?? "50% 50%",
+                    },
+                    "2x": {
+                        mode: 'crop',
+                        width: (cropWidth * 2)|round,
+                        height: (cropRatioFormula is defined ? ((cropWidth * cropRatioFormula)|round) * 2 : null),
+                        quality: 50,
+                        position: source.backgroundImage["focalPoint"] ?? "50% 50%",
+                    }
+                } -%}
+
+                {%- set srcset = (craft.imager.transformImage(source.backgroundImage, params["1x"])
+                    ~ "?#{source.backgroundImage.dateUpdated.getTimestamp()}, "
+                    ~ craft.imager.transformImage(source.backgroundImage, params["2x"] )
+                    ~ "?#{source.backgroundImage.dateUpdated.getTimestamp()} 2x")|trim
+                -%}
+
+                {%- if gridSectionContainedWidth < breakpoints[screenSize].minWidth %}
+                    .background-image-{{ backgroundImage.id }} {
+                        background-image: url({{ craft.imager.transformImage(backgroundImage, params["1x"]) }});
+                    }
+                    @media screen and (min--moz-device-pixel-ratio: 2),
+                         screen and (-o-min-device-pixel-ratio: 2/1),
+                         screen and (-webkit-min-device-pixel-ratio: 2),
+                         screen and (min-device-pixel-ratio: 2) {
+                            .background-image-{{ backgroundImage.id }} {
+                                background-image: url({{ craft.imager.transformImage(backgroundImage, params["2x"]) }});
+                            }
+                        }
+                {%- else -%}
+                    {% if gridSectionContainedWidth < breakpoints[screenSize].maxWidth %}
+                        @media (min-width: {{ breakpoints[screenSize].minWidth }}px) {
+                            .background-image-{{ backgroundImage.id }} {
+                                background-image: url({{ craft.imager.transformImage(backgroundImage, params["1x"]) }});
+                            }
+                        }
+                        @media screen and (min-width: {{ breakpoints[screenSize].minWidth }}px) and (min--moz-device-pixel-ratio: 2),
+                         screen and (min-width: {{ breakpoints[screenSize].minWidth }}px) and (-o-min-device-pixel-ratio: 2/1),
+                         screen and (min-width: {{ breakpoints[screenSize].minWidth }}px) and (-webkit-min-device-pixel-ratio: 2),
+                         screen and (min-width: {{ breakpoints[screenSize].minWidth }}px) and (min-device-pixel-ratio: 2) {
+                            .background-image-{{ backgroundImage.id }} {
+                                background-image: url({{ craft.imager.transformImage(backgroundImage, params["2x"]) }});
+                            }
+                        }
+                    {% else %}
+                        @media (min-width: {{ breakpoints[screenSize].minWidth }}px) and (max-width: {{ breakpoints[screenSize].maxWidth }}px) {
+                            .background-image-{{ backgroundImage.id }} {
+                                background-image: url({{ craft.imager.transformImage(backgroundImage, params["1x"]) }});
+                            }
+                        }
+                        @media screen and (min-width: {{ breakpoints[screenSize].minWidth }}px) and (max-width: {{ breakpoints[screenSize].maxWidth }}px) and (min--moz-device-pixel-ratio: 2),
+                         screen and (min-width: {{ breakpoints[screenSize].minWidth }}px) and (max-width: {{ breakpoints[screenSize].maxWidth }}px) and (-o-min-device-pixel-ratio: 2/1),
+                         screen and (min-width: {{ breakpoints[screenSize].minWidth }}px) and (max-width: {{ breakpoints[screenSize].maxWidth }}px) and (-webkit-min-device-pixel-ratio: 2),
+                         screen and (min-width: {{ breakpoints[screenSize].minWidth }}px) and (max-width: {{ breakpoints[screenSize].maxWidth }}px) and (min-device-pixel-ratio: 2) {
+                            .background-image-{{ backgroundImage.id }} {
+                                background-image: url({{ craft.imager.transformImage(backgroundImage, params["2x"]) }});
+                            }
+                        }
+                    {%- endif -%}
+                {%- endif -%}
+
+            {% endfor %}
+
+        </style>
+    {% endif %}
+
+{% endmacro %}

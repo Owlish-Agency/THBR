@@ -1,0 +1,24 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set entries = craft.entries({
+    section: block["sectionHandle"] ?? null,
+    relatedTo: (block["categories"] ?? null)|length ? block["categories"] : null,
+}) %}
+
+{%- set content -%}
+    {%- include [
+        '_includes/listings/' ~ block.sectionHandle,
+        '_includes/contentkit/listings/' ~ block.sectionHandle,
+        '_includes/contentkit/listings/default',
+    ] ignore missing with {
+        entry: entry,
+        block: block,
+        entries: entries,
+    } only -%}
+{%- endset -%}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+}) }}

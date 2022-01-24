@@ -1,0 +1,60 @@
+{%- set block = block ?? {} -%}
+{%- set backgroundColor = backgroundColor ?? block["backgroundColor"] ?? "" -%}
+{%- set backgroundImage = backgroundImage ?? block["backgroundImage"] ?? "" -%}
+{%- set sectionContent = sectionContent ?? "" -%}
+{%- set sectionFormat = sectionFormat ?? block["sectionFormat"] ?? "grid" -%}
+{%- set sectionSpacing = sectionSpacing ?? block["sectionSpacing"] ?? "" -%}
+{%- set sectionStyles = sectionStyles ?? block["sectionStyles"] ?? [] -%}
+{%- set gridStyles = gridStyles ?? block["gridStyles"] ?? [] -%}
+{%- set isNewSection = isNewSection ?? false -%}
+{%- set containSection = containSection -%}
+{%- set addGrid = addGrid ?? false -%}
+{%- set firstLoop = firstLoop ?? false -%}
+{%- set lastLoop = lastLoop ?? false -%}
+{%- set previousBlockType = previousBlockType ?? "" -%}
+{%- set previousContain = previousContain -%}
+{%- set previousGrid = previousGrid -%}
+{%- set flowType = flowType ?? "" -%}
+{%- set sectionClass = sectionClass ?? "uk-section" -%}
+
+{%- set grid = (sectionFormat == "uk-clearfix" ? "uk-clearfix" : "uk-grid") -%}
+
+{% if isNewSection %}
+    {% if not firstLoop %}
+        {% if addGrid and previousGrid %}
+            </div>
+        {% endif %}
+        {% if containSection and previousContain %}
+            </div>
+        {% endif %}
+        </section>
+    {% endif %}
+    <section class="{{ sectionClass }}{% if not containSection %} uk-has-background{%- endif -%}">
+{% else %}
+    {% if not firstLoop %}
+        {% if addGrid %}
+            </div>
+        {% endif %}
+    {% endif %}
+{% endif %}
+
+
+{% if containSection %}
+    <div class="uk-container uk-container-center">
+{% endif %}
+
+{% if addGrid %}
+    <div class="{%- if "uk-grid" in grid %}uk-grid{%- endif %} {{ gridStyles }} uk-grid-margin" {% if "uk-grid" in grid %}uk-grid{%- endif -%}>
+{% endif %}
+
+{{ sectionContent }}
+
+{% if lastLoop %}
+    {% if addGrid %}
+        </div>
+    {% endif %}
+    {% if containSection %}
+        </div>
+    {% endif %}
+    </section>
+{% endif %}

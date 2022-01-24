@@ -1,0 +1,39 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set eventType = eventType ?? block["eventType"] ?? "" -%}
+{% set events = craft.calendar.events({
+    relatedTo: eventType,
+    order: 'startDate asc',
+    limit: 3,
+
+}) %}
+
+{%- set content -%}
+    <div class="uk-grid" data-uk-grid-margin data-uk-grid-match="{target: '.uk-panel'}">
+        {% for event in events if event.startDate|date("M d") >= now|date("M d") %}
+            <div class="uk-width-1-1 uk-width-medium-1-3">
+                <div class="uk-panel uk-panel-box uk-flex uk-flex-middle">
+                    <div class="uk-flex">
+                        <div class="tm-card-date uk-flex uk-flex-middle uk-flex-center uk-flex-column">
+                            <div>
+                                <p class="tm-card-date--month uk-margin-remove">{{ event.startDate|date("M") }}</p>
+                                <p class="tm-card-date--day uk-margin-remove">{{ event.startDate|date("d") }}</p>
+                            </div>
+                        </div>
+                        <div class="tm-important-dates">
+                            <h6 class="uk-margin-remove"><a href="{{ siteUrl }}calendar/event/{{ event.id }}/{{ event.startDate.format('Y/m/d') }}">{{ event.title }}</a></h6>
+                            <p class="uk-margin-remove">{{ event.startDate|date("l, M d, Y") }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{%- endset -%}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+    section: section,
+}) }}

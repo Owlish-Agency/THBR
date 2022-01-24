@@ -1,0 +1,24 @@
+{%- set pageInfo = pageInfo is defined ? pageInfo : {} -%}
+{%- set prevUrl = prevUrl is defined ? prevUrl : pageInfo.prevUrl|default("") %}
+{%- set nextUrl = nextUrl is defined ? nextUrl : pageInfo.nextUrl|default("") %}
+{%- set queryStringWithoutPath = queryStringWithoutPath ?? craft.request.queryStringWithoutPath -%}
+{%- set fragment = fragment ?? null -%}
+{%- set includePageInfo = includePageInfo ?? false -%}
+<ul class="tm-pagination uk-margin-top uk-margin-bottom-remove">
+    <li class="tm-pagination__item">
+        <a href="{{ prevUrl }}{%- if queryStringWithoutPath|length -%}?{{ queryStringWithoutPath }}{%- endif -%}{%- if fragment -%}#{{ fragment }}{%- endif -%}" class="tm-pagination__button tm-pagination__button--prev{% if not prevUrl %} tm-pagination__button--disabled{% endif %}">
+            <span uk-icon="chevron-left"></span> Prev
+        </a>
+    </li>
+    <li class="tm-pagination__item">
+        <a href="{{ nextUrl }}{%- if queryStringWithoutPath|length -%}?{{ queryStringWithoutPath }}{%- endif -%}{%- if fragment -%}#{{ fragment }}{%- endif -%}" class="tm-pagination__button tm-pagination__button--next {% if not nextUrl  %} tm-pagination__button--disabled{% endif %}">
+            Next <span uk-icon="chevron-right"></span></a>
+    </li>
+</ul>
+{%- if includePageInfo -%}
+<p class="uk-text-center tm-text-italic uk-margin-top-remove tm-text-gray">
+    <small class="small">
+        Showing {{ pageInfo.first }} - {{ pageInfo.last }} of {{ pageInfo.total }} results
+    </small>
+</p>
+{%- endif -%}

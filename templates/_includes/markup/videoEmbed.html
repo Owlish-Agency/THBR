@@ -1,0 +1,47 @@
+{%- import "_includes/contentkit/macros/images" as m_image -%}
+
+{%- set embed = embed is defined ? embed : {} -%}
+{%- set embedUrl = embedUrl is defined ? embedUrl : embed["embedUrl"]|default('') -%}
+{%- set placeholder = placeholder is defined ? placeholder : embed["placeholder"]|default([]) -%}
+{%- set additionalParams = additionalParams ?? "byline=0&amp;title=0&amp;portrait=0&amp;color=ffffff" -%}
+{%- set additionalParamsVimeo = additionalParamsVimeo ?? "loop=0&autoplay=0" -%}
+{%- set imageSize = imageSize ?? {"mini": "5:3", "medium": "256:103"} -%}
+
+<div class="tm-video-wrapper uk-flex">
+    <div class="video-embed"{% if placeholder|length %} data-has-placeholder="true"{% endif %}>
+        <div class="video-embed__video tm-responsive-media">
+            <iframe id="video{{ embed.id }}" class="tm-responsive-media__item uk-responsive-width uk-width-1-1" src="{{ craft.videoEmbed is defined and 'youtube' in craft.videoEmbed.getEmbedUrl(embedUrl) ? craft.videoEmbed.getEmbedUrl(embedUrl) ~ ("?" in craft.videoEmbed.getEmbedUrl(embedUrl) ? "&" : "?") ~ additionalParams : craft.videoEmbed is defined and 'vimeo' in craft.videoEmbed.getEmbedUrl(embedUrl) ? craft.videoEmbed.getEmbedUrl(embedUrl) ~ additionalParamsVimeo }}"></iframe>
+        </div>
+        {%- if placeholder|length -%}
+            {{ m_image.backgroundImage({
+                backgroundImage: placeholder[0],
+                sectionContained: section["containSection"] ?? false,
+                cropRatio: {
+                    "mini": "350:375",
+                    "small": "717:374",
+                    "medium": "909:374",
+                    "large": "1130:375",
+                    "xlarge": "1130:375",
+                },
+                class: "lazyload",
+            }) }}
+            <div class="uk-section uk-background-cover video-embed__placeholder background-image-{{ placeholder[0].id }} tm-call-to-action tm-text-shadow uk-text-center uk-light uk-height-1-1 uk-flex uk-flex-center uk-flex-middle">
+                <div>
+                    {%- include "_includes/markup/contentOverlay" with {
+                        element: embed,
+                    } -%}
+                </div>
+            </div>
+            {# <div class="uk-section video-embed__placeholder background-image-{{ placeholder.first().id }} uk-light">
+                {%- include "_includes/markup/contentOverlay" with {
+                    element: embed,
+                } -%}
+            </div> #}
+        {%- endif -%}
+    </div>
+</div>
+{# We originally included this on the frame as well
+ # frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen
+ # @todo: Add better support for URLs (figure out whether its youtube or vimeo)
+ ^^ This is done above (inside the iframe src), but there may be another way with better execution
+ #}

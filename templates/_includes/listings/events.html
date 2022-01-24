@@ -1,0 +1,139 @@
+{% set program = program ?? null %}
+{% set dates = [] %}
+
+{%- set selectedFilters = craft.request.getParam('filters') %}
+{%- set relatedTo = ['or'] -%}
+
+{% if selectedFilters|length %}
+    {% for filters in selectedFilters %}
+        {%- set relatedTo = relatedTo|merge([{ targetElement: filters }]) -%}
+    {% endfor %}
+{% endif %}
+
+{%- set query = craft.request.getParam('query')|length ? craft.request.getParam('query')|split(" ")|join("* *") : null -%}
+
+{# Get news based on filtered options #}
+{% set events = craft.entries({
+    section: "events",
+    relatedTo: program|length ? program : relatedTo|length > 1 ? (relatedTo) : null,
+    search: "*#{query}*",
+    startDateTime: "> #{now|date_modify('-1 day')}",
+    order: "startDateTime asc"
+})  %}
+
+{%- set programType = craft.categories.group('programType') -%}
+
+{% if program == null %}
+    <div class="uk-grid uk-flex-center">
+        <div class="uk-width-3-5@m">
+            {%- include "_includes/markup/search" with {
+                url: "{{craft.request.getQueryStringWithoutPath()}}",
+                placeholder: "Search...",
+                query: query
+            } -%}
+        </div>
+    </div>
+{% endif %}
+<div class="uk-section tm-news-listing">
+    <div class="uk-container">
+        <div class="uk-grid uk-grid-divider" uk-grid>
+            {% if program == null %}
+                <div class="uk-width-1-5@m">
+                    <div class="uk-panel uk-panel-box uk-hidden@l">
+                        <ul uk-accordion>
+                            <li>
+                                <a class="uk-accordion-title" href="#">Filter</a>
+                                <div class="uk-accordion-content">
+                                    <form method="GET" class="uk-form uk-form-stacked" action="/events">
+                                        <input type="hidden" class="uk-invisible" name="query" value="{{ query }}">
+                                        <h6>Filter by programs:</h6>
+                                        <ul class="uk-list tm-filters">
+                                            {% for category in programType %}
+                                                <li>
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input type="checkbox" name="filters[]" value="{{ category.id }}" {% if category.id in selectedFilters %}checked{% endif %}>
+                                                            {{ category.title }}
+                                                        </label>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                        <button type="submit" class="js-submit-form uk-button uk-button-primary">Filter</button>
+                                    </form>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <form method="GET" class="uk-form uk-form-stacked uk-visible@l" action="/events">
+                        <input type="hidden" class="uk-invisible" name="query" value="{{ query }}">
+                        <div class="uk-panel uk-panel-box">
+                            <h6>Filter by programs:</h6>
+                            <ul class="uk-list tm-filters">
+                                {% for category in programType %}
+                                    <li>
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" name="filters[]" value="{{ category.id }}" {% if category.id in selectedFilters %}checked{% endif %}>
+                                                {{ category.title }}
+                                            </label>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <button type="submit" class="js-submit-form uk-button uk-button-primary">Filter</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="uk-width-4-5@m">
+            {% else %}
+                <div class="uk-width-1-1">
+            {% endif %}
+                {% if events|length %}
+                    {%- paginate events.limit(10) as pageInfo, events -%}
+                        {# {% set events = events|supersort('rsortAs', '{startDateTime.date|date("Y")}')|sort|reverse %} #}
+                        {% for year, entries in events|group('startDateTime.date|date("Y")') %}
+                            {% for month, events in entries|group('startDateTime|date("F")') %}
+                                <h3>{{ month }} {{ year }}</h3>
+                                <dl class="uk-description-list uk-description-list-divider">
+                                    {%- for article in events -%}
+                                        <dt>
+                                            <h4 class="uk-margin-remove"><a href="{{ article.url }}">{{ article.title }}</a></h4>
+                                                <p class="uk-margin-remove-top uk-text-meta">
+                                                    <strong>Event Day/Time:</strong>
+                                                    {{ article.startDateTime|date("F")|length ? article.startDateTime|date("F") }}
+                                                    {{ article.startDateTime|date("j")|length ? article.startDateTime|date("j") ~ "," }}
+                                                    {{ article.startDateTime ? article.startDateTime|date("g:i A") : 'TBD' }}
+                                                    {% if article.endDateTime or article.endDateTime %}
+                                                        -
+                                                        {{ article.endDateTime|date("F")|length and article.startDateTime|date("j") != article.endDateTime|date("j") ? article.endDateTime|date("F") }}
+                                                        {{ article.endDateTime|date("j")|length and article.startDateTime|date("j") != article.endDateTime|date("j") ? article.endDateTime|date("j") ~ "," }}
+                                                        {{ article.endDateTime ? article.endDateTime|date("g:i A") : 'TBD' }}
+                                                    {% endif %}
+                                                </p>
+                                            <p>{{ article.excerpt|striptags }}</p>
+                                            <a href="{{ article.url }}" uk-icon="arrow-right">Learn More</a>
+                                        </dt>
+                                    {% endfor %}
+                                </dl>
+                            {% endfor %}
+                        {% endfor %}
+                    {%- include "_includes/patterns/pagination" with {
+                        pageInfo: pageInfo,
+                        includePageInfo: true,
+                    } -%}
+                {% else %}
+                    <div class="uk-text-center">
+                        {% if program|length %}
+                            <p class="uk-text-large">Sorry, there are no events at this time</p>
+                            <p class="uk-margin-bottom-remove"><a href="/" class="uk-button uk-button-primary">Visit Homepage</a></p>
+                        {% else %}
+                            <p class="uk-text-large">Sorry, there isn't any events that match the selected criteria.</p>
+                            <p class="uk-margin-bottom-remove"><a href="{{craft.request.getQueryStringWithoutPath()}}" class="uk-button uk-button-primary">View all events</a></p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

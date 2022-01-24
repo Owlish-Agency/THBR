@@ -1,0 +1,38 @@
+{%- set field = field ?? {} -%}
+{%- set class = class ?? field["class"] ?? "" -%}
+{%- set id = id ?? fieldId ?? field["id"] ?? null -%}
+{%- set value = value ?? field["value"] ?? "" -%}
+{%- set attributes = attributes ?? field["attributes"] ?? null -%}
+{%- set label = label ?? field["label"] ?? "" %}
+{%- set allowMultiple = allowMultiple ?? field["allowMultiple"] ?? false %}
+{%- set placeholder = placeholder ?? field["placeholder"] ?? "" -%}
+{%- set name = name ?? field["name"] ?? "message[#{label}]" -%}
+{%- set disabled = disabled ?? field["disabled"] ?? false -%}
+{%- set type = type ?? field.type ?? "text" -%}
+{%- set errors = errors ?? null -%}
+{%- set required = field["required"] ?? false %}
+
+{%- set class = [
+    class,
+    field["width"] ?? "uk-width-1-1",
+    errors ? "uk-form-danger"
+]|filter|join(' ') %}
+
+<input
+    class="{{ class }}"
+    value="{{ value }}"
+    name="{{ name starts with "message" and type == "file" ? (allowMultiple ? "attachment[]" : "attachment") : name }}"
+    id="{{ id }}"
+    type="{{ type }}"
+    {% if placeholder|length %} placeholder="{{ placeholder }}"{% endif %}
+    {% if attributes|length %}
+        {% if "data-uk-timepicker" in attributes %}
+            data-uk-timepicker="{format:'12h'}"
+        {% else %}
+        {{ attributes }}
+        {% endif %}
+    {% endif %}
+    {% if allowMultiple %} multiple{% endif %}
+    {% if disabled %} disabled{% endif %}
+    {% if required %} required{% endif %}
+/>

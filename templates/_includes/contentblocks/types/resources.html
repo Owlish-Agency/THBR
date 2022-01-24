@@ -1,0 +1,34 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set resources = resources ?? block["resources"] ?? "" -%}
+{%- set heading = heading ?? block["heading"] ?? "" -%}
+
+{%- set content -%}
+    <h3>{{ heading|length ? heading : "Resources" }}</h3>
+    <table class="uk-table uk-table-condensed uk-table-middle tm-resource-table tm-responsive-table">
+        <thead class="uk-hidden-small">
+            <tr>
+                <th>Document Title</th>
+                <th>Type</th>
+                <th>File Size</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for document in resources %}
+                <tr>
+                    <td><span class="tm-table-head uk-visible-small">Document Title: </span>{{ document.title }}</td>
+                    <td><span class="tm-table-head uk-visible-small">Type: </span>{{ document.extension }}</td>
+                    <td><span class="tm-table-head uk-visible-small">File Size: </span>{{ document.size|filesize }}</td>
+                    <td><a class="uk-button uk-button-primary uk-button-small" href="{{ document.url }}">Download</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{%- endset -%}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+}) }}

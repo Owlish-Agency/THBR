@@ -1,0 +1,10 @@
+.tm-dynamic-links {
+    &.tm-gray-wave {
+        .tm-dynamic-cards {
+            padding-bottom: $section-padding-vertical;
+            @media (min-width: $breakpoint-medium) {
+                padding-bottom: $section-padding-vertical-m;
+            }
+        }
+    }
+}

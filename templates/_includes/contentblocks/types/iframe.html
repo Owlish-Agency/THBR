@@ -1,0 +1,17 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set iframeUrl = iframeUrl ?? block["iframeUrl"] ?? "" -%}
+
+{%- set content -%}
+    {% if iframeUrl|length %}
+        <div class="tm-contain-iframe">
+            <iframe seamless="seamless" id="iframe" src="{{ iframeUrl }}" width="100%"></iframe>
+        </div>
+    {% endif %}
+{%- endset -%}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+}) }}

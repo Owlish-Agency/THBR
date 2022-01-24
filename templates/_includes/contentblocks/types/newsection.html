@@ -1,0 +1,65 @@
+{%- set block = block ?? {} -%}
+{%- set backgroundColor = backgroundColor ?? block["backgroundColor"] ?? "" -%}
+{%- set backgroundImage = backgroundImage ?? block["backgroundImage"] ?? "" -%}
+{%- set backgroundPosition = backgroundPosition ?? block["backgroundPosition"] ?? "" -%}
+{%- set containSection = containSection ?? block["containSection"] ?? true -%}
+{%- set sectionContent = sectionContent ?? "" -%}
+{%- set sectionFormat = sectionFormat ?? block["sectionFormat"] ?? "grid" -%}
+{%- set sectionSpacing = sectionSpacing ?? block["sectionSpacing"] ?? "" -%}
+{%- set sectionStyles = sectionStyles ?? block["sectionStyles"] ?? [] -%}
+{%- set gridGutterSize = gridGutterSize ?? block["gridGutterSize"] ?? "" -%}
+{%- set gridStyles = gridStyles ?? block["gridStyles"] ?? [] -%}
+{%- set isPanel = isPanel ?? block["isPanel"] ?? false -%}
+{%- set panelStyles = panelStyles ?? block["panelStyles"] ?? [] -%}
+
+{%- set class =  [
+    sectionSpacing|length ? sectionSpacing,
+    sectionStyles is iterable ? sectionStyles|join(" ") : sectionStyles,
+    backgroundColor|length ? backgroundColor,
+    class ?? "",
+]|filter|join(" ") -%}
+
+{#- Size the image @ 50% if it looks like a retina image -#}
+{%- set style =  [
+    backgroundImage|length ? "background-image: url(#{backgroundImage[0].url}); background-position: #{(backgroundPosition)};",
+    backgroundImage|length and ('@2x' in backgroundImage[0].filename and "bg-cover" not in class) ? "background-size: #{(backgroundImage[0].width / 2)}px #{(backgroundImage[0].height / 2)}px",
+    style ?? "",
+]|filter|join("; ") -%}
+
+{%- set gridClass =  [
+    (sectionFormat == "flow" ? "uk-clearfix" : "uk-grid"),
+    gridGutterSize is iterable ? gridGutterSize|join(" ") : gridGutterSize,
+    gridStyles is iterable ? gridStyles|join(" ") : gridStyles,
+    gridClass ?? "",
+]|filter|join(" ") -%}
+
+{%- set panelClass =  [
+    "uk-panel uk-panel-box",
+    panelStyles is iterable ? panelStyles|join(" ") : panelStyles,
+    panelClass ?? "",
+    craft.config.contentKit.panelClass ?? null,
+]|filter|join(" ") -%}
+
+{%- set isBlock = class|length or style|length ? true : false %}
+
+{% if isBlock %}
+    <div{%- if class|length %} class="{{ class }}"{%- endif -%}{%- if style|length %} style="{{ style }}"{%- endif -%}>
+{% endif %}
+    {%- if containSection -%}
+        <div class="uk-container uk-container-center">
+    {%- endif -%}
+        {%- if isPanel -%}
+            <div class="{{ panelClass }}">
+        {%- endif -%}
+            <div class="{{ gridClass }}"  data-uk-grid-margin >
+                {{ sectionContent }}
+            </div>
+        {%- if isPanel -%}
+            </div>
+        {%- endif -%}
+    {%- if containSection -%}
+        </div>
+    {%- endif -%}
+{% if isBlock|length %}
+    </div>
+{% endif %}

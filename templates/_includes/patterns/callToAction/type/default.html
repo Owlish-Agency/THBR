@@ -1,0 +1,46 @@
+{%- import "_includes/contentkit/macros/images" as m_image -%}
+
+{% set block = block ?? {} %}
+{% set element = element ?? {} %}
+{% set callToActionLeadIn = callToActionLeadIn ?? element["callToActionLeadIn"] ?? "" %}
+{% set callToActionBody = callToActionBody ?? element["callToActionBody"] ?? "" %}
+{% set link = link ?? element["linkIt"] ?? "" %}
+{% set backgroundImage = backgroundImage ?? element["backgroundImage"] ?? "" %}
+
+
+{{ m_image.backgroundImage({
+    backgroundImage: backgroundImage[0],
+    sectionContained: section["containSection"] ?? false,
+    cropRatio: {
+        "mini": "350:375",
+        "small": "717:374",
+        "medium": "909:374",
+        "large": "1130:375",
+        "xlarge": "1130:375",
+    },
+    class: "lazyload",
+}) }}
+
+<div class="uk-section background-image-{{ backgroundImage[0].id }} tm-call-to-action {% if block["doNotContain"] == false %}tm-call-to-action--contained{% endif %} tm-text-shadow uk-text-center uk-light uk-flex uk-flex-center uk-flex-middle uk-height-1-1">
+    <div>
+        <div class=" uk-container">
+            <div class="uk-grid uk-flex-center" uk-grid>
+                <div class="uk-width-1-1 uk-width-3-4@m">
+                    {% if callToActionLeadIn|length %}
+                        <p class="tm-subtitle uk-margin-remove">{{ callToActionLeadIn }}</p>
+                    {% endif %}
+                    {% if callToActionBody|length %}
+                        <h3 class="uk-margin-remove">{{ callToActionBody|striptags }}</h3>
+                    {% endif %}
+                    {% if link|length %}
+                        <p>
+                            <a class="uk-button uk-button-primary" href="{{ link.url }}" {%- if link.target ?? "" %} target="{{ link.target }}"{%- endif -%}>
+                                {{ link.text }}
+                            </a>
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set fragment = fragment ?? block["fragment"] ?? "" -%}
+{%- set section = section ?? null -%}
+
+{%- set content -%}
+    {% if fragment %}
+        <div class="uk-grid" data-uk-grid-margin>
+            {% for fragmentContentBlock in fragment[0].fragmentContentBlocks %}
+                {%- include [
+                    '_includes/contentblocks/' ~ fragmentContentBlock.type,
+                    '_includes/contentkit/contentblocks/types/' ~ fragmentContentBlock.type,
+                ] ignore missing with {
+                    block: fragmentContentBlock
+                } only -%}
+            {% endfor %}
+        </div>
+    {% endif %}
+{%- endset -%}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+    section: section,
+}) }}

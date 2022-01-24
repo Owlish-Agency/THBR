@@ -1,0 +1,15 @@
+{% extends "_layout" %}
+
+{% block content %}
+
+    <div class="uk-block">
+        <div class="uk-grid">
+            <div class="uk-width-2-3 uk-container-center">
+                    {%- include "_includes/markup/videoEmbed" with {
+                        embed: entry,
+                    } -%}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

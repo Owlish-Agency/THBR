@@ -1,0 +1,44 @@
+.print {
+    display: none;
+}
+.tm-timesheet-title {
+    position: relative;
+    span {
+        position: relative;
+        display: block;
+        @media (min-width: $breakpoint-medium) {
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+        a {
+            color: $global-color !important;
+            font-weight: 300;
+            text-transform: none;
+            font-size: 0.5em;
+            @media (min-width: $breakpoint-medium) {
+                font-size: 0.7em;
+            }
+            svg {
+                padding-left: 10px;
+                padding-bottom: 5px;
+            }
+        }
+    }
+}
+.tm-news-listing {
+    h3 {
+        border-bottom: 1px solid #e5e5e5;
+        padding-bottom: 15px;
+    }
+}
+.se-pre-con {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background: url('/img/hospice-loading.gif') center no-repeat #fff;
+    background-size: 120px 120px;
+}

@@ -1,0 +1,47 @@
+{%- macro column(options = {}) -%}
+    {%- set class = [
+        options["class"] is defined ? (options.class is iterable ? options.class|join(" ") : "") : "",
+    ] -%}
+    {%- set element = options.element ?? "div" -%}
+    {%- set section = options.section ?? {} -%}
+    {%- set block = options.block ?? {} -%}
+    {%- set format = options.format ?? block["format"] ?? {} -%}
+    {%- set columnSize = options.columnSize ?? block["columnSize"] ?? "1-1" -%}
+    {%- set position = options.position ?? block["position"] ?? "" -%}
+    {%- set styles = options.styles ?? block["styles"] ?? format["styles"] ?? [] -%}
+    {%- set content = options.content ?? "" -%}
+
+    {%- if format|length -%}
+            {%- set viewport = "" -%}
+            {%- set viewport = viewport == "all" ? "" : viewport -%}
+            {%- set columnSize = format.columnSize.value ?? "1-1" -%}
+
+            {# Set width using columnSize value (expecting 1-1, 2-6, etc.)  #}
+            {%- set class = class|merge(["uk-width#{viewport|length ? "-" ~ viewport}-#{columnSize == "auto" ? "1-1" : columnSize}"]) -%}
+
+            {%- if format["textAlignment"] ?? "" -%}
+                {%- set class = class|merge(["uk-text-#{format.textAlignment}#{viewport|length ? "-" ~ viewport}"]) -%}
+            {%- endif -%}
+
+            {%- if "tm-text-wrap" in format["styles"] ?? "" -%}
+                {%- set class = class|merge(["uk-align-#{format.position}"]) -%}
+            {%- endif -%}
+
+    {%- endif -%}
+
+    {%- set class = class|merge([
+        (styles is iterable ? styles|join(" ") : styles),
+    ])|filter|join(' ') -%}
+
+    {%- if "uk-width" not in class -%}
+        {%- set class = class ~ " uk-width-1-1" -%}
+    {%- endif -%}
+
+
+    <{{ element }} class="{{ class|trim }}">
+
+        {{ content }}
+
+    </{{ element }}>
+
+{%- endmacro -%}

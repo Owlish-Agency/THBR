@@ -1,0 +1,58 @@
+{%- import "_includes/contentkit/macros/images" as m_image -%}
+
+{%- set entry = entry ?? [] -%}
+{%- set banner = banner ?? null -%}
+{%- set pageTitle = pageTitle ?? null -%}
+{%- set program = program ?? false -%}
+
+{% if banner|length %}
+    {{ m_image.backgroundImage({
+        backgroundImage: banner[0],
+        sectionContained: section["containSection"] ?? false,
+        cropRatio: {
+            "mini": "350:375",
+            "small": "717:374",
+            "medium": "909:374",
+            "large": "1920:498",
+            "xlarge": "1920:398",
+        },
+        class: "lazyload",
+    }) }}
+    <div class="uk-background-cover uk-height-large uk-panel uk-flex uk-flex-center uk-flex-middle background-image-{{ banner.first().id }} uk-light tm-banner">
+        <div class="uk-overlay uk-position-center uk-position-small uk-text-center uk-light uk-width-1-1 uk-width-3-5@s uk-width-3-5@m">
+            <div class="uk-grid uk-flex uk-flex-center uk-text-lead" uk-grid>
+                <div class="uk-width-1-1 uk-width-4-5@m">
+            {% if program == true %}
+                {% if entry.programLogo|length %}
+                    <img class="tm-program-logo" src="{{ entry.programLogo[0].url }}">
+                {% else %}
+                    <h1 class="uk-margin-remove">{{ pageTitle }}</h1>
+                {% endif %}
+                {% if entry.programDescription|length %}<p class="uk-margin-remove tm-program-description">{{ entry.programDescription|striptags }}</p>{% endif %}
+                {% if entry.startDateTime|length %}
+                    <h3 class="uk-margin-remove-top">
+                        {% if entry.endDateTime.date >= now %}
+                            {{ entry.startDateTime.date|date("F")|length ? entry.startDateTime.date|date("F") }}
+                            {{ entry.startDateTime.date|date("j")|length ? entry.startDateTime.date|date("j") ~ "," }}
+                            {{ entry.startDateTime.time ? entry.startDateTime.time|date("g:i A") : 'TBD' }}
+                            {% if entry.endDateTime.date or entry.endDateTime.time %}
+                                -
+                                {{ entry.endDateTime.date|date("F")|length and entry.startDateTime.date|date("j") != entry.endDateTime.date|date("j") ? entry.endDateTime.date|date("F") }}
+                                {{ entry.endDateTime.date|date("j")|length and entry.startDateTime.date|date("j") != entry.endDateTime.date|date("j") ? entry.endDateTime.date|date("j") ~ "," }}
+                                {{ entry.endDateTime.time ? entry.endDateTime.time|date("g:i A") : 'TBD' }}
+                            {% endif %}
+                        {% endif %}
+                    </h3>
+                {% endif %}
+            {% else %}
+                {% if banner[0].bannerOverlay|length %}
+                    <img class="tm-banner-logo{% if  banner[0].bannerOverlaySize == 'large' %} large{% endif %}" src="{{ banner[0].bannerOverlay[0].url }}" title="{{ banner[0].bannerOverlay[0].title }}" {% if banner[0].bannerOverlay[0].altDescription is defined and banner[0].bannerOverlay[0].altDescription|length %}{{ banner[0].bannerOverlay[0].altDescription|striptags }}{% endif %}>
+                {% else %}
+                    <h1>{{ pageTitle }}</h1>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+    </div>
+{% endif %}

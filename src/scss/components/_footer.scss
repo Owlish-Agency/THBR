@@ -1,0 +1,41 @@
+.tm-footer-logo {
+    max-width: 300px;
+    .palliative-care-of-baton-rouge & {
+        max-width: 240px;
+    }
+}
+.tm-icon-list {
+    li {
+        margin: 0 20px;
+        &:first-child {
+            margin-left: 0;
+        }
+        &:last-child {
+            margin-right: 0;
+        }
+        a {
+            padding: 0;
+        }
+    }
+}
+.tm-footer-contact {
+    p {
+        margin-top: 0;
+    }
+}
+footer {
+    font-size: 13px;
+    h6 {
+        text-transform: uppercase;
+    }
+    p {
+        color:  hsla(0,0%,100%,.5);
+    }
+    .uk-list {
+        li {
+            a {
+                color: hsla(0,0%,100%,.7);
+            }
+        }
+    }
+}

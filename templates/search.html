@@ -1,0 +1,59 @@
+{%- set query = craft.request.getParam('query')|length ? craft.request.getParam('query')|split(" ")|join("* *") : null -%}
+{%- set results = query|length ? craft.entries({
+    search: "*#{query}*",
+    sort: "score",
+    id: "and",
+    section: 'and, not callToAction, not carouselImages, not media, not testimonial, not volunteerTimesheets'
+}).limit(10) : [] -%}
+
+{%- extends "_layout" -%}
+
+{%- block content -%}
+<div class="uk-section">
+    <div class="uk-container">
+        <div class="uk-grid uk-flex uk-flex-center" data-uk-grid-margin>
+            <div class="uk-width-1-1 uk-width-3-4@m">
+                <h2 class="uk-text-center">Search The Hospice of Baton Rouge</h2>
+                {%- include "_includes/markup/search" with {
+                    placeholder: "Search..",
+                    query: query
+                } -%}
+            </div>
+        </div>
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-1-1">
+                {% if results|length %}
+                    {% paginate results as pageInfo, results %}
+                        <ul class="uk-list uk-list-striped">
+                        {% for result in results if result.url|length %}
+                            <li >
+                                <div class="uk-grid">
+                                    <div class="uk-width-1-1 uk-flex uk-flex-middle">
+                                        <div>
+                                            <h4 class="uk-margin-remove">{{ result.title }}</h4>
+                                            {% if result.seo.seoDescription|length %}
+                                                {{ result.seo.seoDescription }}
+                                            {% endif %}
+                                            <ul class="tm-list">
+                                                <li><a href="{{ result.url }}">View {{ result.title }}</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {%- include "_includes/patterns/pagination" with {
+                        pageInfo: pageInfo,
+                        includePageInfo: true,
+                    } -%}
+                {% elseif query|length %}
+                    <p class="uk-text-large uk-text-center uk-margin-top">There aren’t any results for <em>{{ craft.request.getParam('query') }}</em>. Please try a broader search.</p>
+                {% else %}
+                    <p class="uk-text-large uk-text-center uk-margin-top">Search The Hospice of Baton Rouge using the field above.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{%- endblock -%}

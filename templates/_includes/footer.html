@@ -1,0 +1,58 @@
+{% import "_macros/markup" as macros %}
+
+{% cache globally using key "footer" if craft.config.cache %}
+    {% minify %}
+        <footer class="uk-light tm-blue-wave">
+            <section class="tm-section-footer">
+                <div class="uk-container">
+                    {% if footer.footerContent is defined and footer.footerContent|length %}
+                        <div class="uk-grid" uk-grid>
+                            <div class="uk-width-2-5@m">
+                                <div class="uk-grid" uk-grid>
+                                    <div class="uk-width-1-1">
+                                        {{ macros.footer_widget(footer.footerContent.left) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uk-width-3-5@m">
+                                <div class="uk-grid uk-grid-small" uk-grid>
+                                    <div class="uk-width-1-2@m">
+                                        <h6>Pages</h6>
+                                        <ul class="uk-list uk-column-1-2@m">
+                                            {{ macros.footer_widget(footer.footerContent.center) }}
+                                            {% if footer.socialMedia|length %}
+                                                <li>
+                                                    {% if footer.socialMedia.facebookLink|length %}<a target="_blank" href="{{ footer.socialMedia.facebookLink }}"><span uk-icon="facebook"></span></a>{% endif %}
+                                                    {% if footer.socialMedia.linkedinLink|length %}<a target="_blank" href="{{ footer.socialMedia.linkedinLink }}"><span uk-icon="linkedin"></span></a>{% endif %}
+                                                    {% if footer.socialMedia.vimeoLink|length %}<a target="_blank" href="{{ footer.socialMedia.vimeoLink }}"><span uk-icon="vimeo"></span></a>{% endif %}
+                                                </li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                    <div class="uk-width-1-2@m">
+                                        {{ macros.footer_widget(footer.footerContent.right) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </section>
+            <section class="uk-section-small">
+                <div class="uk-container">
+                    <hr>
+                    <div class="uk-grid" uk-grid>
+                        <div class="uk-width-1-2@m">
+                            <p class="uk-margin-top-remove uk-text-meta">© {{ now.year }} The Hospice of Baton Rouge All Rights Reserved, developed by <a class="tm-rockit" target="_blank" href="http://www.rockitscienceagency.com">Rockit Science Agency</a>.</p>
+                        </div>
+                        {% if footer.legalNavigation is defined and footer.legalNavigation|length %}
+                            <div class="uk-width-1-2@m">
+                                {{ macros.list_navigationFooter(footer.legalNavigation) }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </section>
+        </footer>
+    {% endminify %}
+{% endcache %}

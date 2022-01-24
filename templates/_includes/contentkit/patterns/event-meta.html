@@ -1,0 +1,10 @@
+{%- set multipleDays = entry.startDate|date("d") == entry.endDate|date("d") ? false : true -%}
+{%- set allDay = entry["allDay"] ?? false -%}
+
+<p class="uk-text-muted">
+    {{ entry.startDate|date("l") }}{% if multipleDays %}&nbsp;– {{ entry.endDate|date("l") }},<br />{%- else -%}, {% endif -%}
+    {{ entry.startDate|date("F j") }}{% if multipleDays %}&nbsp;– {{ entry.endDate|date("j") }},{%- endif %}
+    {%- if not allDay -%}
+       <br />{{ entry.startDate|date("g:i a") }} – {{ entry.endDate|date("g:i a") }}
+    {%- endif %}
+</p>

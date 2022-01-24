@@ -1,0 +1,34 @@
+{%- import "_includes/contentkit/macros/images" as m_image -%}
+
+{% set block = block ?? {} %}
+{% set element = element ?? {} %}
+{% set logo = logo ?? element["logo"] ?? "" %}
+{% set backgroundImage = backgroundImage ?? element["backgroundImage"] ?? "" %}
+
+
+{{ m_image.backgroundImage({
+    backgroundImage: backgroundImage[0],
+    sectionContained: section["containSection"] ?? false,
+    cropRatio: {
+        "mini": "350:375",
+        "small": "717:374",
+        "medium": "909:374",
+        "large": "1130:375",
+        "xlarge": "1130:375",
+    },
+    class: "lazyload",
+}) }}
+
+<div class="uk-section background-image-{{ backgroundImage[0].id }} tm-call-to-action {% if block["doNotContain"] == false %}tm-call-to-action--contained{% endif %} tm-call-to-action-underline tm-text-shadow uk-text-center uk-light uk-flex uk-flex-center uk-flex-middle uk-height-1-1">
+    <div>
+        <div class=" uk-container">
+            <div class="uk-grid uk-flex-center" uk-grid>
+                <div class="uk-width-1-1 uk-width-3-4@m">
+                    {% if logo|length %}
+                        <img class="tm-call-to-action__logo" src="{{ logo[0].url }}" title="{{ logo[0].title }}" alt="{% if logo[0].altDescription is defined and logo[0].altDescription|length %}{{ logo[0].altDescription|striptags }}{% endif %}">
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

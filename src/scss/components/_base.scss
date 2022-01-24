@@ -1,0 +1,45 @@
+img {
+    border-radius: 6px;
+}
+a {
+    text-decoration: none;
+    &:hover, &:focus, &:active {
+        text-decoration: none;
+    }
+    &[uk-icon] {
+        color: $global-primary-color !important;
+        text-transform: uppercase;
+        font-size: 0.9em;
+        &:hover, &:focus, &:active {
+            color: darken($global-primary-color, 5%) !important;
+        }
+        .tm-call-to-action & {
+            color: $white !important;
+            &:hover, &:focus, &:active {
+                color: $white !important;
+            }
+        }
+    }
+}
+.tm-list {
+    padding: 0 !important;
+    margin: 0;
+    list-style: none;
+    li {
+        display: inline-block;
+        margin-left: 14px;
+        &:first-child {
+            margin-left: 0;
+        }
+    }
+}
+
+.tm-small-line {
+    display: inline-block;
+    width: 40px;
+    margin: 10px 0 5px;
+    border-color: $blue;
+}
+.uk-form-help-block {
+    font-size: 0.9em;
+}

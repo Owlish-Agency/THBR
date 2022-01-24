@@ -1,0 +1,18 @@
+{% extends "_layout" %}
+{% set bannersize = "innerPage" %}
+{% if entry.type == "video" %}
+    {% set bannersize = "homePage" %}
+{% else %}
+    {% if bannerText|length %}
+        {% set bannersize = "homePage" %}
+    {% else %}
+        {% set bannersize = "innerPage" %}
+    {% endif %}
+{% endif %}
+
+{% block content %}
+    {% include "_includes/contentblocks/banner" with {
+        banner: [entry],
+        bannerSize: bannersize
+    } %}
+{% endblock %}

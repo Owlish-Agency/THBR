@@ -1,0 +1,60 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set sponsors = sponsors ?? block["sponsors"] ?? "" -%}
+
+{%- set content -%}
+    <div class="tm-sponsorlist">
+        {% for sponsorList in sponsors[0].sponsorList %}
+            {% switch sponsorList.type %}
+                {% case 'sponsorBlock' %}
+                    <h4 class="tm-sponsorlist--heading uk-text-center uk-margin-large">{{ sponsorList.sponsorListTitle }}</h4>
+                    <div class="uk-grid uk-grid-large uk-child-width-1-4@m uk-child-width-1-3@s uk-child-width-1-2 uk-text-center uk-flex uk-flex-center uk-flex-middle  uk-margin-large-bottom" uk-grid>
+                        {% for sponsor in sponsorList.sponsors %}
+                            {% if sponsor.logo|length %}
+                                <div>
+                                    {% if sponsor.linkIt|length %}
+                                        <a href="{{ sponsor.linkIt.url }}" {%- if sponsor.linkIt.target ?? "" %} target="{{ sponsor.linkIt.target }}"{% endif %}>
+                                    {% endif %}
+                                    <img src="{{ sponsor.logo[0].url() }}" title="{{ sponsor.logo[0].title }}" {% if sponsor.logo[0].altDescription is defined and sponsor.logo[0].altDescription|length %}{{ sponsor.logo[0].altDescription|striptags }}{% endif %}>
+                                    {% if sponsor.linkIt|length %}
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            {% elseif sponsor.text|length %}
+                                <div>
+                                    <p class="tm-sponsorlist--sponsor-text">
+                                        {% if sponsor.linkIt|length %}
+                                            <a href="{{ sponsor.linkIt.url }}" {%- if sponsor.linkIt.target ?? "" %} target="{{ sponsor.linkIt.target }}"{% endif %}>
+                                        {% endif %}
+                                        {{ sponsor.text }}
+                                        {% if sponsor.linkIt|length %}
+                                            </a>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% case 'donorBlock' %}
+                    <h4 class="tm-sponsorlist--heading uk-text-center uk-margin-large">{{ sponsorList.donorsListTitle }}</h4>
+                    <div class="uk-grid uk-grid-large uk-child-width-1-6@m uk-child-width-1-4@s uk-child-width-1-2 uk-text-center uk-flex uk-flex-middle  uk-margin-large-bottom" uk-grid>
+                        {% set donorsList = sponsorList.donors.limit('-1') %}
+                        {% for donors in donorsList %}
+                            <div>
+                                <p class="uk-text-bold" style="line-height: 1.5;">
+                                    {% if donors.donorFirstName %}{{ donors.donorFirstName }}{% endif %} {% if donors.donorLastName %}{{ donors.donorLastName }}{% endif %}
+                                </p>
+                            </div>
+                        {% endfor %}
+                    </div>
+            {% endswitch %}
+            <hr>
+        {% endfor %}
+    </div>
+{%- endset -%}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+}) }}

@@ -1,0 +1,117 @@
+{% extends "_layout" %}
+
+{% block content %}
+    {% if craft.session.isLoggedIn %}
+        <section class="uk-section">
+            <div class="uk-container">
+                {% if currentUser.isInGroup('hospice') %}
+                    {# {% set timesheets = craft.entries.section("volunteerTimesheets") %} #}
+                    {% set timesheets = craft.entries({
+                        section: "volunteerTimesheets",
+                        order: 'volunteerDate desc'
+                    }) %}
+                    <h3 class="uk-text-center tm-timesheet-title">Time History
+                        <span><a uk-icon="pull" onClick="exportTableToCSV('volunteer_time_sheet.csv')">Download CSV</a></span>
+                    </h3>
+                    {% if timesheets|length %}
+                        <img src="/img/branding-print.svg" alt="{{ siteName }}" class="print" style="width: 300px; margin-bottom: 10px;" title="Branding Print" alt="Print your timesheets today!"/>
+                        <h3 class="print" style="font-size: 21px; font-weight: bold;">{{ currentUser.getFullName() }}'s Timesheet - <small>{{currentUser.email}}</small></h3>
+                        <p class="print">If you have any questions, feel free to contact Andrea Miller, the Volunteer Coordinator, at (225) 767-4673 or email at volunteercoordinator@hospicebr.org.</p>
+                        {# {%- paginate timesheets.limit(25) as pageInfo, timesheets -%} #}
+                            <table class="uk-table uk-table-responsive uk-table-divider" style="width: 100%; text-align: left;">
+                                <caption></caption>
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Name</th>
+                                        <th>Start Time</th>
+                                        <th>End Time</th>
+                                        <th>Hours Volunteered</th>
+                                        <th>Travel Time</th>
+                                        <th>Mileage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for entry in timesheets %}
+                                        <tr>
+                                            <td>{{ entry.volunteerDate.format('m/d/y') ?? "-" }}</td>
+                                            <td>{{ entry.volunteerName ?? "-" }}</td>
+                                            <td>{% if entry.startTime|length %}{{ entry.startTime|date("g:i A") }}{% else %}-{% endif %}</td>
+                                            <td>{% if entry.endTime|length %}{{ entry.endTime|date("g:i A") }}{% else %}-{% endif %}</td>
+                                            <td>
+                                                {# {% set difference = date(entry.startTime|date('g:i A')).diff(date(entry.endTime|date('g:i A'))) %}
+                                                {% set hours = difference.h %}
+                                                {% set minutes = difference.i %}
+                                                {{ hours > 0 ? hours ~ " HR" : "" }} {{ minutes > 0 ? minutes ~ " MIN" : "" }} #}
+                                                {{ entry.totalVolunteeredHours ~ " Hrs" }}
+                                            </td>
+                                            <td>{{ entry.travelTime ~ " Hrs" ?? "-" }}</td>
+                                            <td>{{ entry.mileage ~ " Mi" ?? "-" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <hr>
+                        {# {%- include "_includes/patterns/pagination" with {
+                            pageInfo: pageInfo,
+                            includePageInfo: true,
+                        } -%} #}
+                    {% else %}
+                        <p class="uk-text-center">Looks like there are currently nothing submitted yet!</p>
+                    {% endif %}
+                {% else %}
+                    <p class="uk-text-center">You do not have the correct permissions to view this page.</p>
+                {% endif %}
+            </div>
+        </section>
+    {% else %}
+        <section class="uk-section uk-has-background">
+            <div class="uk-container">
+                <div class="uk-grid" uk-grid>
+                    <div class="uk-width-1-1 uk-width-3-4@m">
+                        <form class="uk-form-stacked" method="post" accept-charset="UTF-8">
+                            {{ getCsrfInput() }}
+                            <input type="hidden" name="action" value="users/login">
+                            <input type="hidden" name="redirect" value="{{ craft.request.getUrl() }}">
+
+                            <div class="uk-grid uk-grid-small" uk-grid>
+                                <div class="uk-width-1-1">
+                                    <div class="uk-form-controls">
+                                        <input class="uk-input" id="loginName" type="text" name="loginName"
+                                        value="{{ craft.session.rememberedUsername }}"  placeholder="Email Address*" required>
+                                    </div>
+                                </div>
+                                <div class="uk-width-1-1">
+                                    <div class="uk-form-controls">
+                                        <input class="uk-input" id="password" type="password" name="password" placeholder="Password*" required>
+                                    </div>
+                                </div>
+                                <div class="uk-width-1-1">
+                                    <div class="uk-form-controls">
+                                        <label class="uk-form-label uk-margin-small-left uk-width-1-1 rememberMe">
+                                            <input class="uk-checkbox" type="checkbox" name="rememberMe" value="1">
+                                            <span>Remember me</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="uk-width-1-1">
+                                    <div class="uk-form-controls">
+                                        <button class="uk-button uk-button-primary" type="submit" value="Login">Sign In</button>
+                                        <a style="margin-left: 8px; line-height: 2.4;" class="left" href="/volunteer/forgotpassword">Forgot Password?</a>
+                                    </div>
+                                </div>
+                                {% if errorMessage is defined %}
+                                    <p class="errorMessage">{{ errorMessage }}</p>
+                                {% endif %}
+                            </div>
+                        </form>
+                    </div>
+                    <div class="uk-width-1-1 uk-width-1-4@m">
+                        <h6 class="center">Don't have a volunteer account?</h6>
+                        <a class="button" href="/volunteer/volunteer-registration">Volunteer Registration</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+{% endblock %}

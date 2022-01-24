@@ -1,0 +1,22 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set entry = entry ?? {} -%}
+{%- set section = section ?? {} -%}
+{%- set block = block ?? {} -%}
+{%- set snippet = (snippet ?? block["snippet"] ?? "")|lower -%}
+
+{%- set content -%}
+    {%- include [
+        '_includes/snippets/' ~ snippet,
+    ] ignore missing with {
+        entry: entry,
+        block: block,
+        section: section,
+    } only -%}
+{%- endset -%}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+    section: section,
+}) }}

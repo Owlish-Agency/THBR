@@ -1,0 +1,16 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set section = section ?? null -%}
+
+{%- set content -%}
+    {% include "_includes/listings/board-members" %}
+{%- endset -%}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+    section: section,
+}) }}
+
+

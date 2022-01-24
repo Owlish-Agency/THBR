@@ -1,0 +1,10 @@
+node_modules
+/.env.php
+/public/img/uploads
+/public/imager
+/public/img/banners
+/public/img/icons
+/public/img/documents
+/scripts/.env.sh
+/vendor
+/.env

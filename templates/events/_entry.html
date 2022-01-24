@@ -1,0 +1,58 @@
+{%- extends "_layout" -%}
+
+{% block content %}
+<section class="uk-section">
+    <div class="uk-container">
+        <div class="uk-grid" uk-grid>
+            <div class="uk-width-1-1">
+                <h1>{{ entry.title }}</h1>
+            </div>
+        </div>
+        <div class="uk-grid uk-grid-divider" uk-grid>
+            <div class="uk-width-3-5@m">
+                {%- include "_includes/contentblocks" with {
+                    entry: entry,
+                    contentBlocks: entry.simpleContentBlocks ?? [],
+                    flowType: "text, image, listing, form",
+                    doNotContain: "listing, snippets, events"
+                } only -%}
+            </div>
+            <div class="uk-width-2-5@m">
+                <div class="uk-section">
+                    <h4 class="uk-margin-remove-bottom">Event Information</h4>
+                    {% if entry.startDateTime|length or entry.startDateTime|length %}
+                        <p class="uk-margin-remove-top"><strong>Day &amp; Time:</strong>
+                            {{ entry.startDateTime|date("F")|length ? entry.startDateTime|date("F") }}
+                            {{ entry.startDateTime|date("j")|length ? entry.startDateTime|date("j") ~ "," }}
+                            {{ entry.startDateTime ? entry.startDateTime|date("g:i A") : 'TBD' }}
+                            {% if entry.endDateTime or entry.endDateTime %}
+                                -
+                                {{ entry.endDateTime|date("F")|length and entry.startDateTime|date("j") != entry.endDateTime|date("j") ? entry.endDateTime|date("F") }}
+                                {{ entry.endDateTime|date("j")|length and entry.startDateTime|date("j") != entry.endDateTime|date("j") ? entry.endDateTime|date("j") ~ "," }}
+                                {{ entry.endDateTime ? entry.endDateTime|date("g:i A") : 'TBD' }}
+                            {% endif %}
+                        </p>
+                    {% endif %}
+                    {% if entry.eventAddress.name|length or entry.eventAddress.street or entry.eventAddress.street2 or entry.eventAddress.city or entry.eventAddress.region or entry.eventAddress.postalCode %}
+                        <p {% if entry.startDateTime|length == 0 or entry.startDateTime|length == 0 %}class="uk-margin-top-remove"{% endif %}>
+                            {% if entry.eventAddress.name|length %}<strong>{{ entry.eventAddress.name }}</strong><br>{% endif %}
+                            {% if entry.eventAddress.street|length %}{{ entry.eventAddress.street }}<br>{% endif %}
+                            {% if entry.eventAddress.street2|length %}{{ entry.eventAddress.street2 }}<br>{% endif %}
+                            {% if entry.eventAddress.city|length %}{{ entry.eventAddress.city }},{% endif %}
+                            {% if entry.eventAddress.region|length %}{{ entry.eventAddress.region }}{% endif %}
+                            {% if entry.eventAddress.postalCode|length %}{{ entry.eventAddress.postalCode }}{% endif %}
+                        </p>
+                    {% endif %}
+                    {% if entry.registrationLink|length %}
+                        <p>
+                            <a class="uk-button uk-button-primary" href="{{ entry.registrationLink.url }}" {%- if entry.registrationLink.target ?? "" %} target="{{ entry.registrationLink.target }}"{% endif %} >
+                                Register
+                            </a>
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

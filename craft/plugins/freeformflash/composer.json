@@ -1,0 +1,14 @@
+{
+	"name": "/freeformflash",
+	"description": "Set a flash message on submission",
+	"type": "craft-plugin",
+	"authors": [
+		{
+			"name": "Kyle Baker",
+			"homepage": "rockitscienceagency.com"
+		}
+	],
+	"require": {
+		"composer/installers": "~1.0"
+	}
+}

@@ -1,0 +1,56 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set slides = block.slides ?? [] -%}
+{%- set options = block.options ?? [] -%}
+{%- set cropRatio = block["cropRatio"] ?? [] -%}
+{%- set content -%}
+    <div class="uk-slidenav-position" data-uk-slideshow>
+        <ul class="uk-slideshow">
+            {% for slide in slides %}
+                <li>
+                    <img src="{{- slide.getUrl({
+                        mode: 'crop',
+                        width: cropRatio|length ? cropRatio[0]["cropRatio"]|split(":")[0] * 100 : 1600,
+                        height: cropRatio|length ? cropRatio[0]["cropRatio"]|split(":")[1] * 100 : 630,
+                        quality: 100,
+                        position: 'top-center',
+                    }) -}}">
+                </li>
+            {% endfor %}
+        </ul>
+        {% if "previousNext" in block.options ?? false %}
+            <a href="" class="uk-slidenav uk-slidenav-contrast uk-slidenav-previous" data-uk-slideshow-item="previous"></a>
+            <a href="" class="uk-slidenav uk-slidenav-contrast uk-slidenav-next" data-uk-slideshow-item="next"></a>
+        {% endif %}
+        {% if "dots" in block.options ?? false %}
+            <ul class="uk-dotnav uk-dotnav-contrast uk-position-bottom uk-flex-center">
+                {% for i in 1..slides|length %}
+                    <li data-uk-slideshow-item="{{ loop.index0 }}"><a href=""></a></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+    {% if "thumbnails" in block.options ?? false %}
+        <ul class="uk-thumbnav uk-grid-width-1-5 uk-margin">
+            {% for slide in slides %}
+                <li>
+                    <img src="{{- slide.getUrl({
+                        mode: 'crop',
+                        width: cropRatio ? cropRatio[0]["cropRatio"]|split(":")[0] * 100 : 1600,
+                        height: cropRatio ? cropRatio[0]["cropRatio"]|split(":")[1] * 100 : 630,
+                        quality: 100,
+                        position: 'top-center',
+                    }) -}}">
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{%- endset -%}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+}) }}
+
+

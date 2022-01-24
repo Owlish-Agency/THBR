@@ -1,0 +1,49 @@
+{%- import "_includes/contentkit/macros/images" as m_image -%}
+
+{% set block = block ?? {} %}
+{% set element = element ?? {} %}
+{%- set video = video is defined ? video : element['video']|default([]) -%}
+
+{# {% set callToActionLeadIn = callToActionLeadIn ?? element["callToActionLeadIn"] ?? "" %}
+{% set callToActionBody = callToActionBody ?? element["callToActionBody"] ?? "left" %}
+{% set link = link ?? element["linkIt"] ?? "" %}
+{% set backgroundImage = backgroundImage ?? element["backgroundImage"] ?? "" %} #}
+
+
+{# {{ m_image.backgroundImage({
+    backgroundImage: backgroundImage[0],
+    sectionContained: section["containSection"] ?? false,
+    cropRatio: {
+        "mini": "350:375",
+        "small": "717:374",
+        "medium": "909:374",
+        "large": "1130:375",
+        "xlarge": "1130:375",
+    },
+    class: "lazyload",
+}) }} #}
+
+{%- include "_includes/markup/videoEmbed" with {
+    embed: video[0],
+} -%}
+
+
+{# <div class="uk-section background-image-{{ backgroundImage.first().id }} tm-call-to-action tm-call-to-action-underline tm-cover uk-contrast tm-text-shadow uk-text-center uk-light">
+    <div class="uk-container uk-container-center">
+        <div class="uk-flex uk-flex-center uk-flex-middle">
+            <div class="uk-width-1-1 uk-width-3-4@m">
+                <div>
+                    {% if callToActionLeadIn|length %}
+                        <p class="tm-subtitle uk-margin-remove">{{ callToActionLeadIn }}</p>
+                    {% endif %}
+                    {% if callToActionBody|length %}
+                        <h3 class="uk-margin-remove">{{ callToActionBody|striptags }}</h3>
+                    {% endif %}
+                    {%- include "_includes/markup/videoEmbed" with {
+                        embed: video[0],
+                    } -%}
+                </div>
+            </div>
+        </div>
+    </div>
+</div> #}

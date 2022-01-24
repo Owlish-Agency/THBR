@@ -1,0 +1,17 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set video = video is defined ? video : block['video']|default([]) -%}
+
+{% set content %}
+    <div class="tm-video-wrapper">
+        {%- include "_includes/markup/videoEmbed" with {
+            embed: video[0],
+        } -%}
+    </div>
+{% endset %}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+}) }}

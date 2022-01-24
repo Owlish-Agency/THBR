@@ -1,0 +1,7 @@
+{% set link = entry.redirect ?? null %}
+
+{% if entry.redirect %}
+    {% redirect entry.redirect.url ?? "/" %}
+{% else %}
+    Redirect destination has not been set.
+{% endif %}

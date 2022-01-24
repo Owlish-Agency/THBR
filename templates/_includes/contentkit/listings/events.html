@@ -1,0 +1,37 @@
+{%- set entries = craft.entries({
+    section: "events",
+    endDate: "> #{now|date_modify('-1 day')}",
+    relatedTo: (block["categories"] ?? null)|length ? block["categories"] : null,
+}) %}
+
+{%- for month, entries in entries|group("startDate|date('F Y')") -%}
+    <div class="uk-panel uk-panel-divider">
+        <h2 class="uk-text-center">{{ month }}</h2>
+    </div>
+    {% for entry in entries %}
+        {%- set multipleDays = entry.startDate|date("d") == entry.endDate|date("d") ? false : true -%}
+        {%- set allDay = entry["allDay"] ?? false -%}
+        <div class="uk-panel uk-panel-divider">
+            <div class="uk-grid">
+                <div class="uk-width-1-1">
+                    <h3>
+                        <a href="{{ entry.url }}">{{ entry.title }}</a>
+                    </h3>
+                </div>
+                <div class="uk-width-1-1 uk-width-medium-1-3 uk-push-2-3">
+                    {%- include [
+                        '_includes/patterns/event-meta',
+                        '_includes/contentkit/patterns/event-meta',
+                    ] ignore missing with {
+                        entry: entry ?? null,
+                    } only -%}
+                </div>
+                <div class="uk-width-1-1 uk-width-medium-2-3 uk-pull-1-3">
+                    {%- if entry["description"] ?? null -%}
+                        {{ entry.description }}
+                    {%- endif -%}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{%- endfor -%}

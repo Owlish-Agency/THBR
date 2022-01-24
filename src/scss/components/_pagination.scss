@@ -1,0 +1,21 @@
+// Pagination
+.tm-pagination {
+    text-align: center;
+    padding-left: 0;
+    .tm-pagination__item {
+        display: inline-block;
+        margin-right: 16px;
+        margin-left: 16px;
+        a {
+            position: relative;
+            min-width: 8em;
+            text-decoration: none;
+        }
+    }
+    .tm-pagination__button--disabled {
+        color: lighten($global-color, 10%);
+        &:hover, &:focus, &:active {
+            color: lighten($global-color, 10%);
+        }
+    }
+}

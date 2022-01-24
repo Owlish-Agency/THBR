@@ -1,0 +1,28 @@
+{%- set entries = entries ?? [] -%}
+
+{%- for entry in entries -%}
+    {%- set image = entry["image"] ?? [] -%}
+    {%- set body = entry["body"] ?? "" -%}
+    {%- set category = entry["category"] ?? [] -%}
+    {%- set date = now -%}
+    <article class="uk-panel uk-panel-divider uk-article">
+        <h2 class="uk-article-title">
+            <a href="{{ entry.url }}">{{ entry.title }}</a>
+        </h2>
+        {%- if image|length -%}
+            <div class="uk-width-1-4 uk-align-right">
+                <img src="{{ image[0].url }}" class="uk-responsive-width" />
+            </div>
+        {%- endif -%}
+        <p class="uk-article-meta">
+            {{ date|date("F j, Y") }}
+            {%- for category in category -%}
+                {%- if loop.first %}
+                    {{- " in" -}}
+                {% endif -%}
+                {{- " <a href=\"#{category.url}\">#{category.title}</a>#{loop.last ? null : ","}"|raw  -}}
+            {%- endfor -%}
+        </p>
+        {{ body }}
+    </article>
+{%- endfor -%}

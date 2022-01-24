@@ -1,0 +1,23 @@
+{%- extends "_layout" -%}
+
+{% block content %}
+<section class="uk-section">
+    <div class="uk-container">
+        <div class="uk-grid" uk-grid>
+            <div class="uk-width-1-1">
+                <h1>{{ entry.title }}</h1>
+                <p class="uk-text-meta">
+                    <strong>Post Date:</strong>
+                    {{ entry.postDate|date("F j, Y") }}
+                </p>
+                {%- include "_includes/contentblocks" with {
+                    entry: entry,
+                    contentBlocks: entry.simpleContentBlocks ?? [],
+                    flowType: "text, image, listing, form",
+                    doNotContain: "listing, snippets, events"
+                } only -%}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

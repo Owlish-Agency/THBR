@@ -1,0 +1,18 @@
+.tm-sponsorlist {
+    .tm-sponsorlist--heading {
+        color: $blue;
+    }
+    .tm-sponsorlist--sponsor-text {
+        font-family: $banner2;
+        color: $global-emphasis-color;
+        text-transform: uppercase;
+        font-size: 2.250em;
+        line-height: 1em;
+        a {
+            color: $global-emphasis-color;
+            &:hover, &:focus, &:active {
+                color: $global-primary-color;
+            }
+        }
+    }
+}

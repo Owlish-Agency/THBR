@@ -1,0 +1,15 @@
+{#
+    Carousel goes here
+#}
+{%- set carousel = entry.carousel.with(['carouselImage', 'customCarouselText', 'carouselLinks']) -%}
+{%- include "_includes/markup/carousel" with {
+    carousel: carousel,
+} only -%}
+
+{%- include "_includes/contentblocks" with {
+    entry: entry,
+    contentBlocks: entry.contentBlocks ?? [],
+    flowType: "text, image, snippets, form",
+    doNotContain: "listing, snippets"
+} only -%}
+

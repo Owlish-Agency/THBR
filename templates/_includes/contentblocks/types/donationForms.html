@@ -1,0 +1,15 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{% set form = form ?? block["form"] ?? null %}
+
+{% if form|length %}
+    {%- set content -%}
+        {{ form.embed }}
+    {%- endset -%}
+
+    {{ m_grid.column({
+        block: block,
+        content: content,
+    }) }}
+{% endif %}

@@ -1,0 +1,21 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set faq = faq ?? block["faq"] ?? "" -%}
+{%- set heading = heading ?? block["heading"] ?? "" -%}
+
+{%- set content -%}
+    <h3>{{ heading|length ? heading : "FAQ" }}</h3>
+    <div class="uk-accordion tm-faq" data-uk-accordion>
+        {% set faqGroup = faq[0].faqBlock %}
+        {% for entry in faqGroup %}
+            <h4 class="uk-accordion-title uk-margin-remove">{{ entry.question }}</h4>
+            <div class="uk-accordion-content">{{ entry.answer }}</div>
+        {% endfor %}
+    </div>
+{%- endset -%}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+}) }}

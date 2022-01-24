@@ -1,0 +1,75 @@
+{# Banner Image #}
+
+{% if entry.bannerImage|length %}
+    {%- include "_includes/markup/banner" with {
+        banner: entry.bannerImage ?? null,
+        pageTitle: entry.title,
+        entry: entry,
+        program: true
+    } -%}
+    {# Breadcrumb #}
+    {% if craft.request.segments %}
+        {%- include "_includes/markup/breadcrumb" with {
+            entry: entry,
+        } -%}
+    {% endif %}
+{% else %}
+    <div class="uk-section">
+        <div class="uk-container">
+            <div class="uk-grid" uk-grid>
+                <div class="uk-width-1-1">
+                    <div>
+                        <h1 class="uk-text-center uk-margin-remove">{{ entry.title }}</h1>
+                    </div>
+                    {# Breadcrumb #}
+                    {% if craft.request.segments %}
+                        {%- include "_includes/markup/breadcrumb" with {
+                            entry: entry,
+                        } -%}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% if entry.slug != 'news' %}
+    {% if entry.pageIntro is defined and entry.pageIntro|length %}
+        {% if entry.pageIntro.heading|length or entry.pageIntro.description|length %}
+            <section class="uk-section">
+                <div class="uk-grid uk-flex uk-flex-center" uk-grid>
+                    <div class="uk-width-3-4@m uk-text-center">
+                         {% if entry.pageIntro.heading|length %}
+                            <h2>{{ entry.pageIntro.heading }}</h2>
+                        {% endif %}
+                        {% if entry.pageIntro.description|length %}
+                            <div class="uk-text-lead">
+                                {{ entry.pageIntro.description }}
+                            </div>
+                        {% endif %}
+                        {% if entry.pageIntro.buttonLink|length %}
+                            <ul class="tm-list">
+                                {% for link in entry.pageIntro.buttonLink %}
+                                    {% if link.linkIt|length %}
+                                        <li>
+                                            <a class="{{ link.style }}" href="{{ link.linkIt.url }}" {%- if link.linkIt.target ?? "" %} target="{{ link.linkIt.target }}"{% endif %} {% if link.style == "uk-link" %} uk-icon="arrow-right" {%- endif -%}>
+                                                {{ link.linkIt.text }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </section>
+        {% endif %}
+    {% endif %}
+{% endif %}
+
+
+{%- include "_includes/contentblocks" with {
+    entry: entry,
+    contentBlocks: entry.contentBlocks ?? [],
+    flowType: "text, image, listing, form",
+    doNotContain: "listing, snippets"
+} only -%}

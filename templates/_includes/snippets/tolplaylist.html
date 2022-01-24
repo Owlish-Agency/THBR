@@ -1,0 +1,39 @@
+{% set spotifyLink = treesOfLight.tolSpotifyLink %}
+{% if spotifyLink %}
+<div class="uk-container">
+    <div class="uk-grid" uk-grid>
+        <div class="uk-width-1-1">
+            <audio src="/music/jingle-bells.mp3" id="song"></audio>
+            <div class="music-container">  
+                <div class="box">
+
+                    <img src="/music/play.png" onclick="playPause()" id="play-pause" />
+                <img src="/music/forward.png" onclick="nextSong()" id="next-song" />
+                <img src="/music/backward.png" onclick="previousSong()" id="previous-song" />
+        
+                <div class="song-artist">The Hospice of Baton Rouge</div>
+                <div class="song-title">Jingle Bells</div>
+        
+                <!-- Input element for progress bar - min=0 starting value of every song - max length will change per song so leave empty -->
+                
+                <input 
+                    type="range" 
+                    id="progress-bar" 
+                    min="0" 
+                    max="" 
+                    value="0" 
+                    onchange="changeProgressBar()"
+                />
+        
+                <div class="currentTime"></div>
+                <div class="durationTime"></div>
+                </div>      
+                
+                
+            </div>
+            <p class="uk-text-center">Listen on Spotify <a href="https://open.spotify.com/playlist/0X0YS0Tt6DhfTPDUBGpMo5?si=6AruO5qiQ269j41kdU2_1w" target="_blank">here</a>.</p>
+            <script src="/music/player.js"></script>
+        </div>
+    </div>
+</div>
+{% endif %}

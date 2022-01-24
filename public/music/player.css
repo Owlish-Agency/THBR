@@ -1,0 +1,188 @@
+/* container for music player */
+.music-container {
+    position: relative;
+    height: 115px;
+    width: auto;
+    margin: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f5f5f5;
+    border-radius: 10px;
+    padding: 0 15px;
+}
+@media only screen and (min-width: 768px) {
+    .music-container {
+        padding: 0 40px;
+    }
+}
+/* container for play, pause, previous track, next track, and progress bar  */
+.box {
+    position: relative;
+    height: 115px;
+    width: 100%;
+    background: #f5f5f5;
+    z-index: 4;
+}
+
+/* album cover */
+#thumbnail {
+    position: absolute;
+    width: 103%;
+    top: -7%;
+    transition: 1s;
+    z-index: 3;
+}
+
+/* track artist */
+.song-artist {
+    position: absolute;
+    z-index: 4;
+    color: #0D4F70;
+    font-weight: bold;
+    font-size: 16px;
+    top: 14%;
+    left: 70px;
+}
+@media only screen and (min-width: 768px) {
+    .song-artist {
+        font-size: 20px;
+        top: 10%;
+    }
+}
+/* track title */
+.song-title {
+    position: absolute;
+    z-index: 4;
+    color:#bfad20;
+    font-size: 14px;
+    top: 34%;
+    left: 70px;
+}
+@media only screen and (min-width: 768px) {
+    .song-title {
+        font-size: 16px;
+        top: 38%;
+    }
+}
+/* style for play and pause images */
+#play-pause {
+    position: absolute;
+    height: 50px;
+    width: 50px;
+    cursor: pointer;
+    top: 15%;
+    z-index: 4;
+    font-size: 53px;
+    left: 0;
+}
+
+/* style for next and previous song images */
+#next-song, #previous-song {
+    position: absolute;
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+    top: 35%;
+    font-size: 40px;
+    z-index: 4;
+}
+
+/* unique style for next song image */
+#next-song {
+    right: 0;
+}
+
+/* unique style for previous song image */
+#previous-song {
+    right: 35px;
+    bottom: 35%;
+}
+
+/* style for current time of the track */
+.currentTime {
+    position: absolute;
+    height: 20px;
+    width: 50px;
+    cursor: pointer;
+    bottom: 5%;
+    left: 0;
+    z-index: 4;
+    font-size: 12px;
+    color: #adadad;
+    align-items: center;
+}
+@media only screen and (min-width: 768px) {
+    .currentTime {
+        font-size: 13px;
+    }
+}
+/* style for the total length of the track */
+.durationTime {
+    position: absolute;
+    height: 20px;
+    width: 50px;
+    cursor: pointer;
+    bottom: 5%;
+    right: 0;
+    z-index: 4;
+    font-size: 12px;
+    align-items: center;
+    color: #adadad;
+    text-align: right;
+}
+@media only screen and (min-width: 768px) {
+    .durationTime {
+        font-size: 13px;
+    }
+}
+/* style for the progress bar */
+#progress-bar {
+    -webkit-appearance: none;
+    appearance: none;
+    position: absolute;
+    z-index: 4;
+    height: 6px;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    width: 100%;
+    top: 68%;
+    border-radius: 30px;
+    left: 0;
+}
+
+/* style for the progress bar's slider thumb */
+#progress-bar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    margin-top: 0px;
+    margin-left: 0px;
+    height: 7px;
+    width: 7px;
+    border: 0;
+    background: #bfad20;
+    border-radius: 30px;
+    cursor: pointer;
+}
+@media only screen and (min-width: 768px) {
+    #progress-bar::-webkit-slider-thumb {
+        margin-top: -3px;
+    }
+}
+/* style for the progress bar's runnable track */
+#progress-bar::-webkit-slider-runnable-track {
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    max-height: 5px;
+    border-radius: 30px;
+}
+
+/* style to remove blue shade of the progress bar when clicked on/selected */
+#progress-bar:focus {
+    outline: none;
+}

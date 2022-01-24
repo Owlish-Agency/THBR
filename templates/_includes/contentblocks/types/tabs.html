@@ -1,0 +1,51 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set tabbedContent = tabbedContent ?? block["tabbedContent"] ?? "" -%}
+
+{%- set content -%}
+    <div class="uk-grid-large" uk-grid>
+        <div class="uk-width-1-2@m">
+            <ul class="uk-tab-left" uk-tab="connect: #component-tab-left; animation: uk-animation-fade">
+                {% for content in tabbedContent %}
+                    <li {% if loop.first %}class="uk-active"{% endif %}>
+                        <a href="#">
+                            <div class="uk-card uk-card-default uk-card-hover uk-card-body uk-flex uk-flex-center uk-flex-middle">
+                                <span class="uk-text-middle">
+                                    <h5 class="uk-card-title uk-margin-remove">{{ content.heading }}</h5>
+                                </span>
+                            </div>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="uk-width-1-2@m uk-flex uk-flex-middle">
+            <ul id="component-tab-left" class="uk-switcher">
+                {% for content in tabbedContent %}
+                    <li {% if loop.first %}class="uk-active"{% endif %}>
+                        <h4 class="uk-margin-remove">{{ content.heading }}</h4>
+                        <p class="uk-margin-remove-top">{{ content.body|striptags }}</p>
+                        <ul class="tm-list">
+                            {% if content.button|length %}
+                                <li>
+                                    <a class="uk-button uk-button-primary" href="{{ content.button.url }}" {%- if content.button.target ?? "" %} target="{{ content.button.target }}"{% endif %}>{{ content.button.text }}</a>
+                                </li>
+                            {% endif %}
+                            {% if content.linkIt|length %}
+                                <li>
+                                    <a href="{{ content.linkIt.url }}" {%- if content.linkIt.target ?? "" %} target="{{ content.linkIt.target }}"{% endif %} uk-icon="icon: arrow-right">{{ content.linkIt.text }}</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{%- endset -%}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+}) }}

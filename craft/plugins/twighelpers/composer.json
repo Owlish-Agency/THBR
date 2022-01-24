@@ -1,0 +1,14 @@
+{
+	"name": "bwlng/twighelpers",
+	"description": "A few helpful Twig helpers",
+	"type": "craft-plugin",
+	"authors": [
+		{
+			"name": "Stephen Bowling",
+			"homepage": "http://stephenbowling.com"
+		}
+	],
+	"require": {
+		"composer/installers": "~1.0"
+	}
+}

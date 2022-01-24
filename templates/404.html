@@ -1,0 +1,35 @@
+{#
+ # 404 template
+ # ------------
+ #
+ # This template is loaded whenever Craft cannot figure out how to
+ # respond to an incoming request. No setup is involved to get your
+ # 404 page working; you just need to call it 404.html and put it
+ # at the root of your craft/templates/ folder.
+ #
+ # You can also create 400.html, 403.html, 500.html, and 503.html
+ # templates if you’d like. If Craft can’t find an error template
+ # to match the error code, it will just use the one in
+ # craft/app/templates/ instead.
+ #
+ # See this page for more details on how Craft routes requests:
+ # http://craftcms.com/docs/routing
+ #}
+
+{% extends "_layout" %}
+{% set title = "404" %}
+
+{% block content %}
+
+<div class="uk-section">
+    <div class="uk-container">
+        <div class="uk-grid uk-flex uk-flex-center" uk-grid>
+            <div class="uk-width-1-1 uk-width-3-4@s uk-width-1-2@m">
+                <h1 class="uk-text-center">404</h1>
+                <p class="uk-text-center uk-text-lead">Looks like you didn't find the page you were looking for. Click the button below to return to the homepage.</p>
+                <p class="uk-text-center"><a class="uk-button uk-button-primary" href="/">Homepage</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

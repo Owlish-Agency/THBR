@@ -1,0 +1,70 @@
+<div class="uk-container">
+    <div class="uk-grid uk-grid-divider uk-flex uk-flex-middle" uk-grid>
+        <div class="uk-width-1-1 uk-width-1-2@m">
+            {% if craft.session.isLoggedIn %}
+                <h4 class="uk-margin-remove">Volunteer Login</h4>
+                <h6 class="uk-margin-remove-top"><span uk-icon="user"></span>Hi, {{ currentUser.getFullName() }}</h6>
+                <p>You're already signed in! Click the button below to enter or view your volunteer timesheets.</p>
+                <a class="uk-button uk-button-primary" href="/volunteer/volunteer-timesheet">Volunteer Timesheet</a>
+            {% else %}
+                <div class="uk-grid" uk-grid>
+                    <div class="uk-width-1-1">
+                        <h4>Volunteer Login</h4>
+                        <form class="uk-form-stacked" method="post" accept-charset="UTF-8">
+                            {{ getCsrfInput() }}
+                            <input type="hidden" name="action" value="users/login">
+                            <input type="hidden" name="redirect" value="/volunteer/volunteer-timesheet">
+
+                            <div class="uk-grid uk-grid-small" uk-grid>
+                                <div class="uk-width-1-1">
+                                    <input class="uk-input" id="loginName" type="text" name="loginName"
+                                    value="{{ craft.session.rememberedUsername }}" placeholder="Email Address">
+                                </div>
+                            </div>
+                            <div class="uk-grid uk-grid-small" uk-grid>
+                                <div class="uk-width-1-1">
+                                    <input class="uk-input" id="password" type="password" name="password" placeholder="Password">
+                                 </div>
+                            </div>
+                            <div class="uk-grid uk-grid-small" uk-grid>
+                                <div class="uk-width-1-1">
+                                    <label class="uk-form-label uk-margin-small-left uk-width-1-1 rememberMe">
+                                        <input class="uk-checkbox" type="checkbox" name="rememberMe" value="1">
+                                        <span>Remember me</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="uk-grid uk-grid-small" uk-grid>
+                                <div class="uk-width-1-1">
+                                    <button class="uk-button uk-button-primary" type="submit" value="Login">Sign In</button>
+                                    <a style="margin-left: 8px; line-height: 2.4;" class="left" href="/volunteer/forgotpassword">Forgot Password?</a>
+                                </div>
+                                {% if errorMessage is defined %}
+                                    <p class="errorMessage">{{ errorMessage }}</p>
+                                {% endif %}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="uk-grid" uk-grid>
+                    <div class="uk-width-1-1">
+                        <h6 class="uk-margin-remove-bottom">Don't have a volunteer account?</h6>
+                        <a class="button" href="/volunteer/volunteer-registration">Volunteer Registration</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        <div class="uk-width-1-1 uk-width-1-2@m">
+            <div class="uk-grid" uk-grid>
+                <div class="uk-width-1-3@m">
+                    <img src="/img/hospice_calendar_icon.svg" title="Hospice Calendar Icon" alt="Volunteer Calendar">
+                </div>
+                <div class="uk-width-2-3@m">
+                    <h4 class="uk-margin-remove">Volunteer Calendar</h4>
+                    <p class="uk-margin-remove-top">See the latest volunteer opportunities!</p>
+                    <a class="uk-button uk-button-primary" href="/volunteer/volunteer-calendar">Volunteer Calendar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

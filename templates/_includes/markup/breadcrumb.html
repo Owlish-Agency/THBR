@@ -1,0 +1,11 @@
+{% set entry = entry ?? null %}
+
+{% if entry %}
+    <ul class="uk-breadcrumb uk-flex-middle uk-flex-center">
+        <li><a href="/">Home</a></li>
+        {% for crumb in entry.getAncestors() %}
+            <li>{{ crumb.getLink() }}</li>
+        {% endfor %}
+        <li><span>{{ entry.title }}</span></li>
+    </ul>
+{% endif %}

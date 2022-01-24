@@ -1,0 +1,18 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set callToAction = callToAction ?? block["callToAction"].with(['backgroundImage']) ?? [] -%}
+
+{%- set content -%}
+    {% for cta in callToAction %}
+        {% include ["_includes/patterns/callToAction/type/#{cta.type}", "_includes/patterns/callToAction/type/callToActions"] with {
+            element: cta,
+            block: block
+        } only %}
+    {% endfor %}
+{% endset %}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+}) }}

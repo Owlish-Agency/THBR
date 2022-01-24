@@ -1,0 +1,42 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set gridList = gridList ?? block["gridListContent"] ?? [] -%}
+{%- set fullWrapper = "" -%}
+{%- set count = 1 -%}
+
+{% if gridList|length %}
+    {%- set content -%}
+        <div class="uk-align-center tm-grid-list">
+            <div class="uk-grid uk-grid-collapse uk-grid-divider" uk-grid>
+                {% for gridContent in gridList %}
+                    {% switch count %}
+                        {% case 1 %}
+                            {% set class = loop.last and loop.index is odd ? 'uk-width-1-1 uk-text-left' : 'uk-width-1-2@m uk-text-left' %}
+                            {% set fullWrapper = "" %}
+                        {% case 2 %}
+                            {% set class = 'uk-width-1-2@m uk-text-left' %}
+                            {% set fullWrapper = "" %}
+                        {% default %}
+                            {% set class = 'uk-width-1-2@m uk-text-left' %}
+                            {% set fullWrapper = "" %}
+                    {% endswitch %}
+                    <div class="{{ class }}{% if loop.last %} tm-last-loop{% endif %}">
+                        <div class="{{ fullWrapper }} uk-padding">
+                            {% if gridContent.heading|length %}<h4 class="uk-margin-remove">{{ gridContent.heading }}</h4>{% endif %}
+                            {% if gridContent.body|length %}{{ gridContent.body }}{% endif %}
+                        </div>
+                    </div>
+                    {% set count = count + 1 %}
+                {% endfor %}
+            </div>
+        </div>
+    {%- endset -%}
+
+    {{ m_grid.column({
+        block: block,
+        content: content,
+        section: section
+    }) }}
+
+{% endif %}

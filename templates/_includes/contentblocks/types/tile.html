@@ -1,0 +1,29 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set image = image is defined ? image : block['image']|default([]) -%}
+{%- set text = text is defined ? text : block['text']|default([]) -%}
+
+{% set content %}
+<div class="uk-grid uk-grid-collapse uk-flex-middle uk-block-muted">
+    <div class="uk-width-1-1 uk-width-medium-3-6">
+        <img src="{{ image.first().url }}">
+    </div>
+    <div class="uk-width-1-1 uk-width-medium-3-6">
+        <div class="uk-block">
+            <div class="uk-container">
+                <div class="uk-grid">
+                    <div class="uk-width-1-1">
+                        {{ text }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endset %}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+}) }}

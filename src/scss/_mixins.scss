@@ -1,0 +1,248 @@
+@mixin hook-base-body(){
+    font-size: 14px;
+    @media (min-width: $breakpoint-medium) {
+        font-size: 16px;
+    }
+}
+@mixin hook-base-h6() {
+    text-transform: uppercase;
+}
+// Navbar
+@mixin hook-navbar-nav-item() {
+    line-height: $button-line-height;
+    color: $global-color;
+    &.uk-button-primary {
+        color: $white;
+    }
+}
+@mixin hook-navbar() {
+    line-height: $button-line-height;
+}
+// button
+@mixin hook-button() {
+    border-radius: 30px;
+    border: 1px solid $global-color;
+    text-transform: uppercase;
+    text-shadow: none;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.2);
+    padding: 12px 30px !important;
+}
+@mixin hook-button-primary() {
+    border-color: $global-primary-color;
+}
+
+@mixin hook-section-misc(){
+    .uk-section {
+        padding-top: 0;
+        position: relative;
+        z-index: 1;
+        &:first-child {
+            padding-top: $section-padding-vertical;
+        }
+        &:last-child {
+            padding-bottom: $section-padding-vertical * 3;
+            &.uk-section-muted {
+                margin-bottom: 0;
+            }
+        }
+        &.uk-section-muted {
+            padding-top: $section-padding-vertical;
+            margin-bottom: $section-padding-vertical;
+        }
+        .uk-section {
+            padding-top: $section-padding-vertical;
+            padding-bottom: $section-padding-vertical;
+        }
+    }
+    @media (min-width: $breakpoint-medium) {
+        .uk-section {
+            padding-top: 0;
+            &:first-child {
+                padding-top: $section-padding-vertical-m;
+            }
+            &:last-child {
+                padding-bottom: $section-padding-vertical-m * 3;
+                &.uk-section-muted {
+                    margin-bottom: 0;
+                }
+            }
+            &.uk-section-muted {
+                padding-top: $section-padding-vertical-m;
+                margin-bottom: $section-padding-vertical-m;
+            }
+            .uk-section {
+                padding-top: $section-padding-vertical;
+                padding-bottom: $section-padding-vertical;
+            }
+        }
+    }
+}
+@mixin hook-base-link() {
+    transition: color 0.5s ease;
+}
+
+// Form
+@mixin hook-form-misc() {
+    .uk-input, .uk-textarea {
+        padding: 8px 14px;
+        &::placeholder {
+            color: $global-color;
+        }
+    }
+}
+@mixin hook-form() {
+    border: 1px solid $background-gray;
+    border-radius: 3px;
+}
+
+// Base
+@mixin hook-base-blockquote() {
+    text-align: center;
+    color: $blue;
+    font-weight: 300;
+    p {
+        font-size: 1.5em;
+    }
+}
+@mixin hook-base-blockquote-footer() {
+    font-weight: 400;
+    &:before {
+        content: "— ";
+    }
+}
+@mixin hook-slideshow-misc() {
+    .uk-slideshow-items {
+        width: 100%;
+        height: 0!important;
+        padding-bottom: 100%;
+        @media screen and (min-width: $breakpoint-small) {
+            padding-bottom: 58.33%;
+        }
+        @media screen and (min-width: $breakpoint-large) {
+            padding-bottom: 50%;
+        }
+        img {
+            width: 100%;
+        }
+    }
+}
+// Card
+
+@mixin hook-card-misc(){
+    .uk-active {
+        .uk-card-default.uk-card-hover {
+            background: $card-default-hover-background;
+            .uk-card-title {
+                color: $white;
+            }
+        }
+    }
+}
+@mixin hook-card-default() {
+    box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+    border-radius: 6px;
+    svg {
+        fill: $global-primary-color;
+    }
+}
+@mixin hook-card-default-hover() {
+    h5, p {
+        color: $white;
+    }
+    svg {
+        fill: $white;
+    }
+}
+@mixin hook-card-primary() {
+    box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+}
+// Switcher
+@mixin hook-subnav-item-active() {
+    &:after {
+        content: "";
+        border-bottom: 1px solid $global-primary-color;
+        width: 100%;
+        bottom: 0px;
+        left: 10px;
+        position: absolute;
+    }
+}
+
+// Notifications
+@mixin hook-notification-message() {
+    text-align: center;
+}
+@mixin hook-notification-misc() {
+    .uk-notification-message {
+        &.uk-notification-message-danger {
+            background: #B33A3A;
+            color: $white;
+        }
+        &.uk-notification-message-success {
+            background: $global-success-background;
+            color: $white;
+        }
+    }
+}
+@mixin hook-accordion-misc() {
+    .tm-test {
+        &:after {
+            content: none !important;
+        }
+    }
+    .uk-accordion-title {
+        margin-top: 0;
+        padding: 5px 15px;
+        background: 0 0;
+        &:after {
+            content: "";
+            width: 1.4em;
+            height: 1.4em;
+            float: right;
+            background-image: url('/img/accordion-close.svg');
+            background-repeat: no-repeat;
+            background-position: 50% 50%;
+        }
+    }
+    .uk-open {
+        .uk-accordion-title {
+            &:after {
+                background-image: url('/img/accordion-open.svg');
+            }
+        }
+    }
+}
+@mixin hook-offcanvas-bar() {
+    padding: 0;
+    width: 80%;
+    ul {
+        &.tm-m-primary-links {
+            padding: 35px;
+        }
+        li {
+            a {
+                @media screen and (min-width: $breakpoint-medium) {
+                    padding: 10px;
+                }
+                padding: 5px;
+                display: block;
+                height: auto;
+                font-size: 1rem;
+                &.tm-m-sub-links {
+                    font-size: 0.9em;
+                }
+                &.uk-active {
+                    color: $global-primary-color;
+                }
+            }
+        }
+    }
+    .uk-close {
+        display: block;
+        height: auto;
+        padding: 20px;
+    }
+}
+@mixin hook-description-list-term() {
+    font-weight: 300;
+}

@@ -1,0 +1,106 @@
+{{ form.renderTag({
+    class: "uk-form",
+    labelClass: "uk-form-label",
+    submitClass: "uk-button",
+}) }}
+
+{% if form.hasErrors %}
+    {% set notifyJs %}
+        UIkit.notify({
+            message : 'There was an error submitting this form',
+            status  : 'danger',
+            timeout : 5000,
+            pos     : 'top-center'
+        });
+    {% endset %}
+    {% includejs notifyJs %}
+    <div class="uk-alert uk-alert-danger">
+        {{ "There was an error submitting this form"|t }}
+    </div>
+{% endif %}
+
+<div class="uk-grid uk-grid-small" data-uk-grid-margin>
+    {% for row in form %}
+        {% for field in row %}
+            {# {% set columnClass = columnClass ~ (field.errors|length ? " uk-text-danger" : "") %} #}
+
+            <div class="uk-width-1-1 uk-width-medium-1-{{ row|length }}">
+                {% if field.type not in ["html", "submit"] %}
+                    <label class="uk-form-label uk-width-1-1 uk-text-truncate {% if field.errors|length %}uk-form-danger{% endif %}" for="form-input-{{ field.handle }}">
+                        {{ field.label }}
+                        {%- if field.required -%}
+                            <sup class="uk-text-danger">*</sup>
+                        {%- endif -%}
+                    </label>
+                {% endif %}
+                <div class="uk-form-controls">
+                    {% if field.handle|lower ends with "date" %}
+                        <div class="uk-form-icon uk-width-1-1">
+                            <i class="uk-icon-calendar"></i>
+                            {{ field.renderInput({
+                                class: "uk-width-1-1#{field.errors|length ? ' uk-form-danger'}",
+                                inputAttributes: {
+                                    "data-uk-datepicker": "",
+                                },
+                            }) }}
+                        </div>
+                    {% elseif field.handle|lower ends with "time" %}
+                        <div class="uk-form-icon uk-width-1-1">
+                            <i class="uk-icon-clock-o"></i>
+                            {{ field.renderInput({
+                                class: "uk-width-1-1#{field.errors|length ? ' uk-form-danger'}",
+                                errorClass: "uk-form-danger",
+                                inputAttributes: {
+                                    "data-uk-timepicker": "{format:'12h'}",
+                                },
+                            }) }}
+                        </div>
+                    {% elseif field.type == "checkbox_group" %}
+                        {% for option in field.options %}
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox"
+                                           name="{{ field.handle }}[]"
+                                           value="{{ option.value }}"
+                                            {{ option.checked ? "checked" : "" }}
+                                    />
+                                    {{ option.label }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    {% elseif field.type == "radio_group" or (field.type == "dynamic_recipients" and field.showAsRadio) %}
+                        {% for option in field.options %}
+                            <div class="radio">
+                                <label>
+                                    <input type="radio"
+                                           name="{{ field.handle }}"
+                                           value="{{ option.value }}"
+                                            {{ option.checked ? "checked" : "" }}
+                                    />
+                                    {{ option.label }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        {{ field.renderInput({
+                            class: ((field.type in ["select", "submit"] ? "" : "uk-width-1-1") ~ "#{field.errors|length ? ' uk-form-danger'}"),
+                        }) }}
+                    {% endif %}
+                </div>
+                {% if field.instructions %}
+                    <div class="uk-form-help-block">
+                        {{ field.instructions }}
+                        {% if field.errors %}
+                            {% for errorString in field.errors %}
+                                <div class="uk-text-danger">{{ errorString }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+{% endfor %}
+</div>
+
+{{ form.renderClosingTag }}

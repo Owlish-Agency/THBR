@@ -1,0 +1,15 @@
+{% extends "_layout" %}
+
+{% block content %}
+<div class="uk-container uk-container-center">
+    <div class="uk-block">
+        <div class="uk-grid">
+            <div class="uk-width-1-1">
+            {% include "_includes/contentblocks/faq" with {
+                faq: [entry],
+            } %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

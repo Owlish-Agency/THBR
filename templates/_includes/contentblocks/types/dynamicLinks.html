@@ -1,0 +1,33 @@
+{%- import "_includes/contentkit/layout/grid" as m_grid -%}
+
+{%- set block = block ?? {} -%}
+{%- set cards = cards ?? block["links"] ?? "" -%}
+
+{%- set content -%}
+    <div class="uk-child-width-1-3@m uk-grid-match tm-dynamic-cards" uk-grid>
+        {% for card in cards %}
+            <div class="tm-gray-wave__card">
+                {% if card.linkIt|length %}
+                    <a href="{{ card.linkIt.url }}" {%- if card.linkIt.target ?? "" %} target="{{ card.linkIt.target }}"{% endif %}>
+                {% endif %}
+                    <div class="uk-card uk-card-default uk-card-hover uk-card-body {% if card.icon|length %}uk-card-small{% endif %} uk-flex uk-flex-center uk-flex-middle">
+                        {% if card.icon|length %}
+                            <img class="uk-align-left uk-margin-remove-bottom uk-margin-small-right" src="{{ card.icon[0].url }}" uk-svg>
+                        {% endif %}
+                        <span class="uk-text-middle">
+                            <h5 class="uk-card-title uk-margin-remove">{{ card.heading }}</h5>
+                            <p class="uk-margin-remove uk-text-small">{{ card.description|striptags }}</p>
+                        </span>
+                    </div>
+                {% if card.linkIt|length %}
+                    </a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{%- endset -%}
+
+{{ m_grid.column({
+    block: block,
+    content: content,
+}) }}

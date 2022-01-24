@@ -1,0 +1,16 @@
+/**** Place this file in your web/public directory ****/
+
+// 1. Your custom variables and variable overwrites.
+@import '_variables.scss';
+
+// 2. Import default UIkit variables and available mixins.
+@import "../../../frameworks/uikit3/scss/variables.scss";
+@import "../../../frameworks/uikit3/scss/mixins.scss";
+
+// 3. Your custom mixin overwrites.
+@import '_mixins.scss';
+
+// 4. Import UIkit.
+@import "../../../frameworks/uikit3/scss/uikit.scss";
+
+// 5. Custom stylesheets go here

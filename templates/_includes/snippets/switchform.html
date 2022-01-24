@@ -1,0 +1,36 @@
+{% set title = switchForm.switchTitle %}
+{% set forms = switchForm.switchForms %}
+
+<div class="uk-grid" uk-grid>
+    <div class="uk-width-1-1">
+        <h3 class="uk-text-center">{{ title }}</h3>
+    </div>
+    <div class="uk-width-1-1">
+        <!-- This is the container of the toggling elements -->
+        <ul class="uk-subnav uk-flex-center" uk-switcher="animation: uk-animation-fade">
+            {% for form in forms %}
+                <li><a href="">{{ form.freeform.name }}</a></li>
+            {% endfor %}
+        </ul>
+
+        <!-- This is the container of the content items -->
+        <ul class="uk-switcher">
+            {% for form in forms %}
+                <li>
+                    <div class="uk-grid uk-flex uk-flex-center" uk-grid>
+                        <div class="uk-width-3-4@m uk-text-center">
+                            {% if form.description|length %}
+                                {{ form.description }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% include "_includes/forms/freeform" with {
+                        form: form.freeform,
+                        successFlashMessage: form.successFlashMessage,
+                        switch: true,
+                    } %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>

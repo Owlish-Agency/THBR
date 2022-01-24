@@ -1,0 +1,5 @@
+{% if craft.request.segments %}
+    {%- include "volunteer" with {
+        entry: entry,
+    } -%}
+{% endif %}

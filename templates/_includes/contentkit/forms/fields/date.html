@@ -1,0 +1,53 @@
+{%- set field = field ?? {} -%}
+{%- set fieldId = fieldId ?? field["id"] ?? null -%}
+{%- set options = options ?? field["options"] ~ "" ?? [] -%}
+{%- set includeDateAndTime = ("Date" in options and "Time" in options) ? true : false %}
+{%- set errors = errors ?? null -%}
+
+{%- if includeDateAndTime -%}
+    <div class="uk-grid">
+        <div class="uk-width-1-1 uk-width-medium-1-2">
+{%- endif -%}
+
+{%- if "Date" in options -%}
+    <div class="uk-form-icon uk-width-1-1">
+        <i class="uk-icon-calendar"></i>
+        {%- include [
+            '_includes/forms/fields/input',
+            '_includes/contentkit/forms/fields/input',
+        ] ignore missing with {
+            field: field,
+            fieldId: fieldId,
+            type: "text",
+            attributes: "data-uk-datepicker",
+            errors: errors,
+        } only -%}
+    </div>
+{%- endif -%}
+
+{%- if includeDateAndTime -%}
+        </div>
+        <div class="uk-width-1-1 uk-width-medium-1-2">
+{%- endif -%}
+
+{%- if "Time" in options -%}
+    <div class="uk-form-icon uk-width-1-1">
+        <i class="uk-icon-clock-o"></i>
+        {%- include [
+            '_includes/forms/fields/input',
+            '_includes/contentkit/forms/fields/input',
+        ] ignore missing with {
+            field: field|merge({
+                type: "text",
+            }),
+            fieldId: fieldId,
+            attributes: "data-uk-timepicker",
+            errors: errors,
+        } only -%}
+    </div>
+{%- endif -%}
+
+{%- if includeDateAndTime -%}
+        </div>
+    </div>
+{%- endif -%}

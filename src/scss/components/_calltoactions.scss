@@ -1,0 +1,18 @@
+.tm-call-to-action {
+    position: relative;
+    min-height: 400px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    &.tm-call-to-action--contained {
+        border-radius: 8px;
+    }
+}
+
+.tm-call-to-action__logo {
+    max-width: 285px;
+    width: 100%;
+}
+.tm-call-to-action__text {
+    font-size: 1.125em;
+    line-height: 1.5;
+}

@@ -1,0 +1,198 @@
+{
+  "name": "rsagency",
+  "version": "1.0.0",
+  "description": "Website for hospicebr.org",
+  "main": "gulpfile.js",
+  "author": "Kyle Baker, rockitscienceagency <kyle@rockitscienceagency.com>",
+  "copyright": "Rockit Science Agency",
+  "license": "UNLICENSED",
+  "private": true,
+  "paths": {
+    "src": {
+      "base": "./src/",
+      "css": "./src/css/",
+      "fontello": "./src/fontello/",
+      "fonts": "./src/fonts/",
+      "json": "./src/json/",
+      "js": "./src/js/",
+      "img": "./src/img/",
+      "scss": "./src/scss/"
+    },
+    "dist": {
+      "base": "./public/",
+      "css": "./public/css/",
+      "pc": "./public/pc/",
+      "js": "./public/js/",
+      "fonts": "./public/fonts/",
+      "img": "./public/img/"
+    },
+    "build": {
+      "base": "./build/",
+      "css": "./build/css/",
+      "pc": "./build/pc/",
+      "fontello": "./build/fonts/fontello/",
+      "fonts": "./build/fonts/",
+      "js": "./build/js/",
+      "html": "./build/html/",
+      "img": "./build/img/"
+    },
+    "favicon": {
+      "src": "./src/img/favicon_src.png",
+      "dest": "./public/img/site/",
+      "path": "/img/site/"
+    },
+    "scss": [],
+    "templates": "./templates/"
+  },
+  "urls": {
+    "live": "https://hospicebr.org/",
+    "local": "https://hospice.test/",
+    "critical": "https://hospicebr.org/"
+  },
+  "vars": {
+    "siteCssName": "site.combined.min.css",
+    "sitePcCssName": "pc.combined.min.css",
+    "scssName": "screen.scss",
+    "pcScssName": "pc-screen.scss",
+    "cssName": "screen.css",
+    "pcCssName": "pc-screen.css",
+    "siteUiKitName": "uikit.combined.min.js",
+    "uikitName": "uikit.js"
+  },
+  "globs": {
+    "distCss": [
+      "./node_modules/normalize.css/normalize.css",
+      "./node_modules/flexboxgrid/dist/flexboxgrid.min.css",
+      "./build/fonts/fontello/css/fontello-codes.css",
+      "./build/css/*.css",
+      "./src/css/*.css"
+    ],
+    "distPcCss": [
+      "./node_modules/normalize.css/normalize.css",
+      "./node_modules/flexboxgrid/dist/flexboxgrid.min.css",
+      "./build/fonts/fontello/css/fontello-codes.css",
+      "./build/pc/*.css",
+      "./src/css/*.css"
+    ],
+    "img": [
+      "./public/assets/img/"
+    ],
+    "components": [
+      "./src/components/**/*.vue"
+    ],
+    "fonts": [
+      "./build/fonts/fontello/font/*.{eot,ttf,woff,woff2}",
+      "./src/fonts/*.{eot,ttf,woff,woff2}"
+    ],
+    "critical": [
+      {
+        "url": "",
+        "template": "index"
+      },
+      {
+        "url": "404",
+        "template": "404"
+      }
+    ],
+    "download": [
+      {
+        "url": "https://www.google-analytics.com/analytics.js",
+        "dest": "./public/js/"
+      }
+    ],
+    "distJs": [
+      "./build/js/*.js",
+      "./node_modules/lazysizes/lazysizes.min.js",
+      "./node_modules/lazysizes/plugins/bgset/ls.bgset.min.js",
+      "./node_modules/picturefill/dist/picturefill.min.js",
+      "./node_modules/vue/dist/vue.min.js",
+      "./node_modules/moment/moment.js",
+      "./node_modules/object-fit-images/dist/ofi.min.js"
+    ],
+    "babelJs": [
+      "./src/js/*.js"
+    ],
+    "inlineJs": [
+      "./node_modules/fg-loadcss/src/loadCSS.js",
+      "./node_modules/fg-loadcss/src/cssrelpreload.js",
+      "./node_modules/fontfaceobserver/fontfaceobserver.js",
+      "./node_modules/loadjs/dist/loadjs.min.js",
+      "./node_modules/tiny-cookie/tiny-cookie.min.js",
+      "./src/js/register-service-worker.js",
+      "./src/js/asyncload-blog-fonts.js",
+      "./src/js/asyncload-site-fonts.js"
+    ],
+    "uikit": [
+      "./uikit/js/core/accordion.js",
+      "./uikit/js/core/alert.js"
+    ],
+    "siteIcon": "./public/img/site/favicon.*"
+  },
+  "dependencies": {
+    "clipboard": "^2.0.0",
+    "fg-loadcss": "^1.2.0",
+    "flexboxgrid": "^6.3.1",
+    "fontfaceobserver": "^2.0.5",
+    "gulp": "^3.9.1",
+    "lazysizes": "^2.0.6",
+    "loadjs": "^3.3.1",
+    "normalize.css": "^5.0.0",
+    "object-fit-images": "^3.2.3",
+    "picturefill": "^3.0.2",
+    "semantic-ui-dropdown": "^2.3.1",
+    "tiny-cookie": "^1.0.1",
+    "moment": "^2.20.1",
+    "vue": "^2.2.0"
+  },
+  "devDependencies": {
+    "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-preset-es2015": "^6.16.0",
+    "chalk": "^1.1.3",
+    "critical": "^1.1.0",
+    "fancy-log": "^1.2.0",
+    "git-rev-sync": "^1.7.1",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-babel": "^6.1.2",
+    "gulp-cached": "^1.1.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-cssnano": "^2.1.2",
+    "gulp-debug": "^2.1.2",
+    "gulp-download": "^0.0.1",
+    "gulp-favicons": "^2.2.6",
+    "gulp-filter": "^5.0.1",
+    "gulp-fontello": "^0.4.6",
+    "gulp-header": "^1.8.7",
+    "gulp-if": "^2.0.1",
+    "gulp-imagemin": "^3.1.1",
+    "gulp-jsmin": "^0.1.5",
+    "gulp-livereload": "^3.8.1",
+    "gulp-load-plugins": "^1.5.0",
+    "gulp-newer": "^1.2.0",
+    "gulp-plumber": "^1.1.0",
+    "gulp-print": "^2.0.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-replace": "0.5.4",
+    "gulp-rev": "^7.1.0",
+    "gulp-sass": "^3.1.0",
+    "gulp-size": "^2.1.0",
+    "gulp-sourcemaps": "^2.2.1",
+    "gulp-streamify": "1.0.2",
+    "gulp-uglify": "^1.5.4",
+    "moment": "^2.20.1",
+    "pa11y": "^4.11.0",
+    "vinyl-source-stream": "^1.1.0",
+    "vueify": "^8.7.0"
+  },
+  "scripts": {
+    "start": "gulp",
+    "build": "gulp build"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "bugs": {
+    "email": "kyle@rockitscienceagency.com"
+  }
+}

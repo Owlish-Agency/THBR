@@ -1,7 +1,16 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /
+	
+	# If the hostname is NOT hospicebr.org
+	 RewriteCond %{HTTP_HOST} !hospicebr\.org$ [NC]
+	# RewriteCond %{HTTP_HOST} ^www\.hospicebr\.org$ [NC]
+	# 301 redirect to the same resource on hospicebr.org
+	 RewriteRule ^(.*) https://hospicebr.org/$1 [L,R=301]
 
+	# SSL only
+    RewriteCond %{HTTP:X-Forwarded-Proto} !^https
+    RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [NC,R=301,L]
+	
     # Setup staticAssetsVersion
     RewriteRule ^(.+)\.(\d+)\.(bmp|css|cur|gif|ico|jpe?g|js|png|svgz?|webp|webmanifest)$ $1.$3 [L]
 

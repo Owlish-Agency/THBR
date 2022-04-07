@@ -1,11 +1,20 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 	
-	# If the hostname is NOT hospicebr.org
-	 RewriteCond %{HTTP_HOST} !hospicebr\.org$ [NC]
-	# RewriteCond %{HTTP_HOST} ^www\.hospicebr\.org$ [NC]
-	# 301 redirect to the same resource on hospicebr.org
-	 RewriteRule ^(.*) https://hospicebr.org/$1 [L,R=301]
+	# RewriteCond %{HTTP_HOST} !hospicebr\.org$ [NC]
+    # RewriteCond %{HTTP_HOST} ^www\.hospicebr\.org$ [NC]
+    # 301 redirect to the same resource on hospicebr.org
+    # RewriteRule ^(.*) https://hospicebr.org/$1 [L,R=301]
+    RewriteCond %{HTTP_HOST} ^www.palliativebr.com [NC,OR]
+    RewriteCond %{HTTP_HOST} ^palliativebr.com [NC,OR]
+    RewriteCond %{HTTP_HOST} ^www.palliativebr.org [NC,OR]
+    RewriteCond %{HTTP_HOST} ^palliativebr.org [NC]
+    RewriteRule (.*) https://hospicebr.org/palliative-care-of-baton-rouge [R=301,L]
+
+
+    # Remove www
+    RewriteCond %{HTTP_HOST} ^www\.hospicebr\.org$ [NC]
+    RewriteRule (.*) https://hospicebr.org/$1 [R=301,L]
 
 	# SSL only
     RewriteCond %{HTTP:X-Forwarded-Proto} !^https
@@ -21,6 +30,7 @@
     RewriteRule (.+) index.php?p=$1 [QSA,L]
 
 </IfModule>
+
 
 # ----------------------------------------------------------------------
 # | ETags                                                              |

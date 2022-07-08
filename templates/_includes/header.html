@@ -53,6 +53,8 @@
                             <a class="uk-navbar-brand uk-padding-remove tm-brand" href="/">
                                 {% if "palliative-care-of-baton-rouge" in craft.request.getSegments() %}
                                     <img src="/img/pcbr_logo.svg" title="Palliative Care Logo" alt="Palliative Care" class=""/>
+                                {% elseif "healthcare_navigator" in craft.request.getSegments() %}
+                                    <img src="/img/healthcare_navigator.png" title="Healthcare Navigator Logo" alt="Healthcare Navigator" class=""/>
                                 {% else %}
                                     {% if header.logo is defined and header.logo|length %}
                                         <img src="{{ header.logo[0].url() }}" title="The Hospice of Baton Rouge Logo" alt="{{ siteName }}" class=""/>

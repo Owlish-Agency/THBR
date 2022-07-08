@@ -48,7 +48,7 @@
                 {% if banner[0].bannerOverlay|length %}
                     <img class="tm-banner-logo{% if  banner[0].bannerOverlaySize == 'large' %} large{% endif %}" src="{{ banner[0].bannerOverlay[0].url }}" title="{{ banner[0].bannerOverlay[0].title }}" {% if banner[0].bannerOverlay[0].altDescription is defined and banner[0].bannerOverlay[0].altDescription|length %}{{ banner[0].bannerOverlay[0].altDescription|striptags }}{% endif %}>
                 {% else %}
-                    {% if entry.slug != 'healthcare_navigator' %}
+                    {% if craft.app.request.segment(1) != 'healthcare_navigator' %}
                     	<h1>{{ pageTitle }}</h1>
 					{% endif %}
                 {% endif %}

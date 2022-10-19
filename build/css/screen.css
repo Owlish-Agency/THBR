@@ -1762,8 +1762,6 @@ select.uk-form-width-xsmall {
 .uk-input,
 .uk-textarea {
   padding: 8px 14px; }
-  .uk-input::-webkit-input-placeholder, .uk-textarea::-webkit-input-placeholder {
-    color: #666666; }
   .uk-input:-ms-input-placeholder, .uk-textarea:-ms-input-placeholder {
     color: #666666; }
   .uk-input::placeholder, .uk-textarea::placeholder {
@@ -5074,7 +5072,6 @@ ul.uk-nav-sub {
   box-sizing: border-box;
   margin: 0 !important;
   /* 1 */
-  -webkit-backface-visibility: hidden;
   backface-visibility: hidden; }
 
 /*
@@ -7335,7 +7332,7 @@ iframe.uk-cover {
  * 3. Blur doesn't work on pseudo elements with negative `z-index` in Edge.
  *    Solved by using `before` and add position context to child elements.
  */
-@supports ((-webkit-filter: blur(0)) or (filter: blur(0))) or (-webkit-filter: blur(0)) {
+@supports (filter: blur(0)) or (-webkit-filter: blur(0)) {
   .uk-box-shadow-bottom {
     display: inline-block;
     position: relative;
@@ -7352,7 +7349,6 @@ iframe.uk-cover {
     height: 30px;
     border-radius: 100%;
     background: #444;
-    -webkit-filter: blur(20px);
     filter: blur(20px); }
   /* 3 */
   .uk-box-shadow-bottom > * {
@@ -8142,13 +8138,11 @@ iframe.uk-cover {
 
 .uk-position-center-left-out {
   right: 100%;
-  width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content; }
 
 .uk-position-center-right-out {
   left: 100%;
-  width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content; }
 
@@ -8271,9 +8265,7 @@ iframe.uk-cover {
 [class*='uk-transition-scale'],
 [class*='uk-transition-slide'] {
   transition: 0.3s ease-out;
-  transition-property: opacity, transform, -webkit-filter;
-  transition-property: opacity, transform, filter;
-  transition-property: opacity, transform, filter, -webkit-filter; }
+  transition-property: opacity, transform, filter; }
 
 /*
  * Fade
@@ -9645,6 +9637,12 @@ header {
     .tm-banner-logo {
       max-height: 290px;
       padding: 0px; } }
+  @media (min-width: 640px) {
+    .tm-banner-logo.large {
+      max-width: 360px; } }
+  @media (min-width: 960px) {
+    .tm-banner-logo.large {
+      max-width: 580px; } }
 
 .tm-call-to-action {
   position: relative;
@@ -9657,6 +9655,10 @@ header {
 .tm-call-to-action__logo {
   max-width: 285px;
   width: 100%; }
+
+.tm-call-to-action__text {
+  font-size: 1.125em;
+  line-height: 1.5; }
 
 /* ==========================================================================
    $BASE-PICKER
@@ -10354,8 +10356,8 @@ footer {
             font-size: 0.85em; } }
         @media (min-width: 1200px) {
           .tm-primary-nav-container ul li a.uk-button {
-            padding: 0 18px !important;
-            line-height: 40px;
+            padding: 8px 18px !important;
+            line-height: 1.5;
             font-size: 0.9em; } }
         .tm-primary-nav-container ul li a.uk-button:hover, .tm-primary-nav-container ul li a.uk-button:focus, .tm-primary-nav-container ul li a.uk-button:active {
           border-color: inherit; }

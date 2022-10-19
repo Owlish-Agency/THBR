@@ -180,8 +180,8 @@
                         font-size: 0.85em;
                     }
                     @media (min-width: $breakpoint-large) {
-                        padding: 0 18px !important;
-                        line-height: 40px;
+                        padding: 8px 18px !important;
+                        line-height: 1.5;
                         font-size: 0.9em;
                     }
                      &:hover, &:focus, &:active {
